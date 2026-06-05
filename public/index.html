@@ -1495,7 +1495,6 @@
                                 const data = trimmed.substring(5).trim();
                                 // Skip heartbeat integers and empty
                                 if (!data || /^\d+$/.test(data)) continue;
-                                console.log('SSE data received:', data.substring(0, 120));
                                 this.handleSSEData(data);
                             }
                         }
@@ -1565,7 +1564,6 @@
                     if (!entry) return;
 
                     const entryType = entry.entryType || '';
-                    console.log('SSE entryType:', entryType, 'sender:', entry.sender?.role);
 
                     switch (entryType) {
                         case 'Message':
@@ -1596,7 +1594,7 @@
 
             handleAgentMessage(data) {
                 this.removeTyping();
-                console.log('handleAgentMessage called, sender:', data.conversationEntry?.sender?.role);
+                // Extract agent response from SSE event
 
                 // Extract text from various SCRT2 message formats
                 let text = '';

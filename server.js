@@ -261,21 +261,18 @@ app.get('/api/agent/sse', (req, res) => {
     function connectUpstream() {
         if (closed) return;
         buffer = '';
-        dlog('connectUpstream called, retryCount=' + retryCount);
 
         const sseReq = https.request(options, (sseRes) => {
-            dlog('SSE upstream response status: ' + sseRes.statusCode);
             if (sseRes.statusCode !== 200) {
+                dlog('SSE upstream status: ' + sseRes.statusCode);
                 let body = '';
                 sseRes.on('data', c => body += c);
-                sseRes.on('end', () => {
-                    dlog('SSE upstream error body: ' + body.substring(0, 200));
-                });
+                sseRes.on('end', () => dlog('SSE upstream error: ' + body.substring(0, 200)));
                 try { res.write(`data:{"error":"upstream_${sseRes.statusCode}"}\n\n`); } catch {}
                 retryCount++;
                 if (retryCount <= maxRetries && !closed) {
                     const delay = Math.min(2000 * retryCount, 10000);
-                    dlog(`SSE upstream retry ${retryCount}/${maxRetries} in ${delay}ms`);
+                    dlog(`SSE retry ${retryCount}/${maxRetries} in ${delay}ms`);
                     setTimeout(connectUpstream, delay);
                 } else if (!closed) {
                     try { res.write(`data:{"error":"max_retries"}\n\n`); } catch {}
@@ -284,15 +281,13 @@ app.get('/api/agent/sse', (req, res) => {
                 return;
             }
 
-            dlog('SSE upstream connected OK');
+            dlog('SSE upstream connected');
             retryCount = 0;
             sseReq.setTimeout(0);
 
             sseRes.on('data', (chunk) => {
                 if (closed) return;
-                const chunkStr = chunk.toString();
-                buffer += chunkStr;
-                dlog('SSE upstream chunk: ' + chunkStr.length + ' bytes');
+                buffer += chunk.toString();
 
                 const events = buffer.split('\n\n');
                 buffer = events.pop() || '';
@@ -305,19 +300,15 @@ app.get('/api/agent/sse', (req, res) => {
                         if (line.startsWith('event:')) continue;
                         if (line.startsWith('id:')) continue;
                         if (line.trim()) {
-                            try { res.write(line + '\n'); forwarded = true; } catch (e) {
-                                dlog('res.write failed: ' + e.message);
-                            }
+                            try { res.write(line + '\n'); forwarded = true; } catch {}
                         }
                     }
                     if (forwarded) {
                         try { res.write('\n'); } catch {}
-                        dlog('SSE forwarded event to browser');
                     }
                 }
             });
             sseRes.on('end', () => {
-                dlog('SSE upstream ended');
                 if (!closed) {
                     retryCount++;
                     if (retryCount <= maxRetries) {
@@ -328,7 +319,6 @@ app.get('/api/agent/sse', (req, res) => {
                 }
             });
             sseRes.on('error', (err) => {
-                dlog('SSE upstream error: ' + err.message);
                 if (!closed) {
                     retryCount++;
                     if (retryCount <= maxRetries) {
@@ -341,7 +331,6 @@ app.get('/api/agent/sse', (req, res) => {
         });
 
         sseReq.on('error', (err) => {
-            dlog('SSE request error: ' + err.message);
             if (!closed) {
                 retryCount++;
                 if (retryCount <= maxRetries) {
@@ -354,7 +343,6 @@ app.get('/api/agent/sse', (req, res) => {
         });
 
         sseReq.on('timeout', () => {
-            dlog('SSE connect timeout');
             sseReq.destroy();
             if (!closed) {
                 retryCount++;
@@ -368,12 +356,12 @@ app.get('/api/agent/sse', (req, res) => {
         });
 
         sseReq.end();
-        req.on('close', () => { dlog('Browser SSE closed'); closed = true; sseReq.destroy(); cleanup(null); });
+        req.on('close', () => { closed = true; sseReq.destroy(); cleanup(null); });
     }
 
     connectUpstream();
     } catch (err) {
-        dlog('SSE handler crash: ' + err.message);
+        console.error('SSE handler crash:', err.message);
         try { res.status(500).json({ error: 'internal_error' }); } catch {}
     }
 });
@@ -414,7 +402,7 @@ app.get('/health', (req, res) => {
 
 // Version check
 app.get('/api/version', (req, res) => {
-    res.json({ version: 'v6-debug-sse', ts: Date.now() });
+    res.json({ version: 'v7-production', ts: Date.now() });
 });
 
 // Debug log endpoint
