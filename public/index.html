@@ -651,13 +651,14 @@
 
         .chat-demo-body {
             padding: 20px;
-            min-height: 380px;
-            max-height: 380px;
+            min-height: 420px;
+            max-height: 420px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            scrollbar-width: none;
+            scrollbar-width: thin;
+            scrollbar-color: #444 transparent;
         }
 
         .chat-demo-body::-webkit-scrollbar {
@@ -734,11 +735,45 @@
         .chat-demo-input {
             flex: 1;
             background: #2a2a2a;
-            border: none;
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 100px;
             padding: 10px 16px;
-            color: #999;
+            color: #e0e0e0;
             font-size: 13px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-demo-input:focus {
+            border-color: var(--nike-orange);
+        }
+
+        .chat-demo-input::placeholder {
+            color: #666;
+        }
+
+        .chat-demo-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quick-prompts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .quick-prompts .capability-chip {
+            font-size: 12px;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .quick-prompts .capability-chip:hover {
+            background: var(--nike-orange);
+            border-color: var(--nike-orange);
+            color: white;
+            transform: translateY(-1px);
         }
 
         .chat-demo-send {
@@ -987,8 +1022,8 @@
                     <span class="pulse-dot"></span>
                     Agentforce Powered
                 </div>
-                <h2>See It<br><span>In Action</span></h2>
-                <p>Watch our Nike Assistant handle real customer scenarios — from finding the perfect shoe to tracking your order. Try it live on the chat or explore the demos below.</p>
+                <h2>Talk To<br><span>Nike Agent</span></h2>
+                <p>This is a real Agentforce-powered assistant. Ask about products, track orders, run a style quiz, or get help with returns — all live, right here.</p>
 
                 <div class="agent-capabilities">
                     <span class="capability-chip"><span class="chip-icon">🎯</span>Style Quiz</span>
@@ -1001,35 +1036,35 @@
                     <span class="capability-chip"><span class="chip-icon">📏</span>Size Guide</span>
                 </div>
 
-                <button class="btn-primary" onclick="openChat()" style="background: var(--nike-orange);">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align: middle; margin-right: 6px;"><path d="M16 17.25h2A2.25 2.25 0 0020.25 15V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v9A2.25 2.25 0 006 17.25h6a2.25 2.25 0 012.25 2.25V21m.75-8.25H7.5m9-4.5h-9"/></svg>Try It Live
-                </button>
+                <div class="quick-prompts" style="margin-bottom: 24px;">
+                    <p style="color: #999; font-size: 13px; margin-bottom: 10px; text-align: left;">Try asking:</p>
+                    <button class="capability-chip" onclick="sendQuickPrompt('I need running shoes for a marathon. What do you recommend?')" style="cursor:pointer; text-align:left;">🏃 "Running shoes for a marathon"</button>
+                    <button class="capability-chip" onclick="sendQuickPrompt('Can you run a style quiz for me?')" style="cursor:pointer; text-align:left;">🎯 "Run a style quiz"</button>
+                    <button class="capability-chip" onclick="sendQuickPrompt('Where is my order 00000167? My email is jane.doe@nike-test.com')" style="cursor:pointer; text-align:left;">📦 "Track order #00000167"</button>
+                    <button class="capability-chip" onclick="sendQuickPrompt('I want to return my order 00000168')" style="cursor:pointer; text-align:left;">🔄 "Return order #00000168"</button>
+                </div>
             </div>
 
             <div>
-                <div class="scenario-tabs">
-                    <button class="scenario-tab active" onclick="playScenario('shopping')">🛍️ Shopping</button>
-                    <button class="scenario-tab" onclick="playScenario('order')">📦 Order</button>
-                    <button class="scenario-tab" onclick="playScenario('style')">🎯 Style Quiz</button>
-                    <button class="scenario-tab" onclick="playScenario('returns')">🔄 Returns</button>
-                </div>
-                <div class="chat-demo">
+                <div class="chat-demo" id="liveChatWindow">
                     <div class="chat-demo-header">
                         <div class="chat-demo-avatar">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M21 8.719L7.836 14.303C6.74 14.768 5.818 15 5.075 15c-.836 0-1.445-.295-1.819-.884-.485-.76-.273-1.982.559-3.272.494-.754 1.122-1.446 1.734-2.108-.144.234-1.415 2.349-.025 3.345.275.2.666.298 1.147.298.386 0 .829-.063 1.316-.19L21 8.719z"/></svg>
                         </div>
                         <div class="chat-demo-name">
                             <h4>Nike Assistant</h4>
-                            <span>● Online now</span>
+                            <span id="agentStatus">● Connecting...</span>
                         </div>
-                        <svg width="16" height="16" fill="none" stroke="#666" stroke-width="2"><circle cx="2" cy="8" r="1" fill="#666"/><circle cx="8" cy="8" r="1" fill="#666"/><circle cx="14" cy="8" r="1" fill="#666"/></svg>
+                        <button onclick="resetChat()" style="background:none;border:none;cursor:pointer;" title="New conversation">
+                            <svg width="16" height="16" fill="none" stroke="#666" stroke-width="2"><path d="M1 4v6a2 2 0 002 2h10l4 4V4a2 2 0 00-2-2H3a2 2 0 00-2 2z"/></svg>
+                        </button>
                     </div>
                     <div class="chat-demo-body" id="chatDemoBody">
-                        <!-- Messages rendered by JS -->
+                        <div class="chat-msg agent" style="opacity:1;transform:none;">👋 Hi! I'm your Nike Assistant, powered by Agentforce. Ask me anything about products, orders, returns, or take a style quiz!</div>
                     </div>
                     <div class="chat-demo-footer">
-                        <input class="chat-demo-input" type="text" placeholder="Type a message..." readonly>
-                        <button class="chat-demo-send" onclick="openChat()">
+                        <input class="chat-demo-input" type="text" placeholder="Type a message..." id="liveAgentInput" onkeypress="if(event.key==='Enter')sendLiveMessage()">
+                        <button class="chat-demo-send" onclick="sendLiveMessage()" id="liveSendBtn">
                             <svg width="16" height="16" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
                         </button>
                     </div>
@@ -1121,7 +1156,6 @@
         <span class="tooltip">Chat with Nike Assistant</span>
     </button>
 
-    <!-- Salesforce Embedded Messaging Widget -->
     <script>
         // ===== PRODUCT DATA =====
         const products = [
@@ -1142,10 +1176,8 @@
         function renderProducts(filter = 'all') {
             const grid = document.getElementById('productGrid');
             const title = document.getElementById('product-section-title');
-
             const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
             title.textContent = filter === 'all' ? 'Popular Right Now' : filter;
-
             grid.innerHTML = filtered.map(p => `
                 <div class="product-card" onclick="askAboutProduct('${p.name}')">
                     <div class="product-image" style="background: ${p.color};">${p.emoji}</div>
@@ -1164,48 +1196,33 @@
             document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Initialize products
         renderProducts();
 
         // ===== EMBEDDED SERVICE (MIAW) =====
         function openChat() {
-            try {
-                if (window.embeddedservice_bootstrap) {
-                    // Try to maximize the chat widget
-                    const chatBtn = document.querySelector('.embeddedServiceHelpButton .helpButton button') ||
-                                    document.querySelector('[embeddedService-chatHeader-chatButton]') ||
-                                    document.querySelector('.embeddedMessagingFrame');
-
-                    // Try Messaging for Web approach
-                    if (typeof embeddedservice_bootstrap.utilAPI !== 'undefined') {
-                        embeddedservice_bootstrap.utilAPI.launchChat();
-                    } else {
-                        // Fallback: simulate click on the embedded button
-                        const eswButtons = document.querySelectorAll('button');
-                        for (let btn of eswButtons) {
-                            if (btn.closest('.embeddedMessagingConversationButton') ||
-                                btn.closest('[class*="embeddedMessaging"]')) {
-                                btn.click();
-                                return;
-                            }
-                        }
-                        // Last resort: look for any SF chat-related element
-                        const frame = document.querySelector('[class*="embeddedMessaging"]');
-                        if (frame) frame.click();
-                    }
-                }
-            } catch (e) {
-                console.log('Chat widget interaction:', e);
+            // Scroll to the live agent section and focus input
+            const liveSection = document.getElementById('live-agent');
+            if (liveSection) {
+                liveSection.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => {
+                    const input = document.getElementById('liveAgentInput');
+                    if (input) input.focus();
+                }, 600);
             }
         }
 
         function askAboutProduct(productName) {
             openChat();
-            // The user can then type their question about the product in the chat
-            console.log('Product inquiry for:', productName);
+            setTimeout(() => {
+                const input = document.getElementById('liveAgentInput');
+                if (input) {
+                    input.value = `Tell me about the ${productName}. Is it good for everyday use?`;
+                    input.focus();
+                }
+            }, 700);
         }
 
-        // ===== LOAD SALESFORCE MIAW WIDGET =====
+        // Also try MIAW widget as backup
         function initEmbeddedMessaging() {
             try {
                 embeddedservice_bootstrap.settings.language = 'en_US';
@@ -1213,51 +1230,27 @@
                     '00Dbm00000jtzs9',
                     'Nike_CS_Web_Chat',
                     'https://trailsignup-d7fd90d7f30b8a.my.site.com/ESWNikeCSWebChat1780609842315',
-                    {
-                        scrt2URL: 'https://trailsignup-d7fd90d7f30b8a.my.salesforce-scrt.com'
-                    }
+                    { scrt2URL: 'https://trailsignup-d7fd90d7f30b8a.my.salesforce-scrt.com' }
                 );
-                console.log('MIAW widget initialized successfully');
-
-                // Hide our custom chat button once the SF widget loads
-                setTimeout(() => {
-                    const sfChat = document.querySelector('[class*="embeddedMessaging"]');
-                    if (sfChat) {
-                        document.getElementById('chatTrigger').style.display = 'none';
-                    }
-                }, 3000);
-            } catch (err) {
-                console.error('Error loading Messaging for Web widget:', err);
-            }
+            } catch (err) { console.log('MIAW init skipped'); }
         }
-
-        // Load the ESW bootstrap script
         const eswScript = document.createElement('script');
         eswScript.src = 'https://trailsignup-d7fd90d7f30b8a.my.site.com/ESWNikeCSWebChat1780609842315/assets/js/bootstrap.min.js';
-        eswScript.type = 'text/javascript';
         eswScript.onload = initEmbeddedMessaging;
-        eswScript.onerror = function() {
-            console.log('Could not load MIAW bootstrap script — chat will not be available');
-        };
+        eswScript.onerror = () => {};
         document.body.appendChild(eswScript);
 
         // ===== SEARCH =====
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const query = this.value.trim().toLowerCase();
-                const filtered = products.filter(p =>
-                    p.name.toLowerCase().includes(query) ||
-                    p.category.toLowerCase().includes(query)
-                );
-
+                const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
                 const grid = document.getElementById('productGrid');
                 const title = document.getElementById('product-section-title');
                 title.textContent = `Search: "${this.value}"`;
-
                 if (filtered.length === 0) {
-                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--nike-gray); padding: 60px 0;">No products found. Try <a href="#" onclick="openChat(); return false;" style="color: var(--nike-orange); cursor: pointer;">asking our Nike Assistant</a> for help!</p>';
+                    grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--nike-gray);padding:60px 0;">No products found. Try <a href="#" onclick="openChat(); return false;" style="color:var(--nike-orange);cursor:pointer;">asking our Nike Assistant</a>!</p>';
                 } else {
-                    renderProducts('all');
                     grid.innerHTML = filtered.map(p => `
                         <div class="product-card" onclick="askAboutProduct('${p.name}')">
                             <div class="product-image" style="background: ${p.color};">${p.emoji}</div>
@@ -1270,12 +1263,10 @@
                         </div>
                     `).join('');
                 }
-
                 document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
             }
         });
 
-        // Nav links
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1284,117 +1275,415 @@
             });
         });
 
-        // ===== LIVE AGENT DEMO =====
-        const scenarios = {
-            shopping: [
-                { type: 'agent', text: "👋 Hey there! Welcome to Nike. I'm your personal shopping assistant. What are you looking for today?", delay: 500 },
-                { type: 'user', text: "I need running shoes for a marathon. Budget around $150.", delay: 2000 },
-                { type: 'agent', text: "Great choice! 🏃 For marathon training, I'd recommend:", delay: 2500 },
-                { type: 'agent', text: "1. <strong>Nike Pegasus 41</strong> — $139.99\n   Our #1 running shoe. Perfect for any distance.\n\n2. <strong>Nike Vomero 18</strong> — $159.99\n   Extra cushioning for long-run comfort.\n\n3. <strong>Nike Structure 26</strong> — $139.99\n   Stability support for overpronators.", delay: 1800 },
-                { type: 'user', text: "The Pegasus looks good! What size should I get?", delay: 3000 },
-                { type: 'agent', text: "Nike Pegasus runs true to size for most runners. Pro tip: if you're running long distances, go <strong>half a size up</strong> — your feet swell during marathons! 👟\n\nWant me to add the Pegasus 41 to your cart?", delay: 2000 }
-            ],
-            order: [
-                { type: 'agent', text: "👋 Hi! How can I help you today?", delay: 500 },
-                { type: 'user', text: "Where is my order #NKE-20260159?", delay: 1800 },
-                { type: 'agent', text: "Let me look that up for you... 📦", delay: 1500 },
-                { type: 'agent', text: "Found it! Here's your order status:\n\n📋 <strong>Order #NKE-20260159</strong>\n• Nike Air Max 90 (Size 10)\n• Status: <strong>In Transit</strong> 🚚\n• Carrier: FedEx\n• Est. Delivery: <strong>June 7, 2026</strong>\n\nYour package is currently in Memphis, TN.", delay: 2200 },
-                { type: 'user', text: "Can I change the delivery address?", delay: 2500 },
-                { type: 'agent', text: "Since the package is already in transit, I can request a FedEx redirect for you. There may be a small delay.\n\nWhat's the new delivery address? 📍", delay: 2000 }
-            ],
-            style: [
-                { type: 'agent', text: "👋 Welcome! Want me to run a quick style quiz to find your perfect Nike gear? 🎯", delay: 500 },
-                { type: 'user', text: "Yeah, let's do it!", delay: 1800 },
-                { type: 'agent', text: "Awesome! First question:\n\n🏃 What's your main activity?\n• Running\n• Basketball\n• Training\n• Casual / Lifestyle", delay: 1500 },
-                { type: 'user', text: "Casual / Lifestyle", delay: 2000 },
-                { type: 'agent', text: "Nice! What's your style vibe?\n• Classic — clean & timeless\n• Trendy — street style\n• Bold — statement pieces\n• Minimalist — less is more", delay: 1500 },
-                { type: 'user', text: "Trendy!", delay: 1800 },
-                { type: 'agent', text: "✨ <strong>Your Nike Style: The Trendsetter</strong>\n\n🎯 <strong>Your Top Picks:</strong>\n\n1. <strong>Nike Dunk Low Retro</strong> — $109.99\n   The hottest streetwear silhouette right now.\n\n2. <strong>Nike Air Max 90</strong> — $129.99\n   Iconic visible Air — always in style.\n\n3. <strong>Nike Air Max Plus</strong> — $174.99\n   Bold tuned air design that turns heads.", delay: 2500 }
-            ],
-            returns: [
-                { type: 'agent', text: "👋 Hi! How can I help you today?", delay: 500 },
-                { type: 'user', text: "I need to return some shoes I bought last week.", delay: 1800 },
-                { type: 'agent', text: "I'd be happy to help with that! Could you share your order number or the email address used for the purchase? 📧", delay: 1800 },
-                { type: 'user', text: "Order #NKE-20260143", delay: 1500 },
-                { type: 'agent', text: "Found it! ✅\n\n📋 <strong>Order #NKE-20260143</strong>\n• Air Jordan 1 Retro High OG (Size 11)\n• Purchased: May 29, 2026\n• Return window: <strong>30 days remaining</strong>\n\nGood news — you're within the return window! What's the reason for the return?", delay: 2200 },
-                { type: 'user', text: "They're a bit too tight. Need a size 11.5.", delay: 2200 },
-                { type: 'agent', text: "No problem! I can set up an exchange for <strong>Size 11.5</strong> right away. 🔄\n\nI'll email you a <strong>free return shipping label</strong>, and we'll ship the new size as soon as we receive your return.\n\nNike Members get <strong>free returns</strong> — I see you're a member! 💎", delay: 2000 }
-            ]
+        // ============================================================
+        // ===== REAL AGENTFORCE HEADLESS CHAT (SCRT2 REST API) =====
+        // ============================================================
+        const AgentChat = {
+            accessToken: null,
+            conversationId: null,
+            sseSource: null,
+            isConnected: false,
+            isFirstMessage: true,
+            pendingAgentText: '',
+            typingTimer: null,
+            messageBuffer: '',
+            lastAgentMsgEl: null,
+
+            // Generate UUID v4
+            uuid() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                    const r = Math.random() * 16 | 0;
+                    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+                });
+            },
+
+            // Update status indicator
+            setStatus(text, color) {
+                const el = document.getElementById('agentStatus');
+                if (el) el.innerHTML = `<span style="color:${color}">●</span> ${text}`;
+            },
+
+            // Add message to chat UI
+            addMessage(text, type, animate = true) {
+                const body = document.getElementById('chatDemoBody');
+                const msg = document.createElement('div');
+                msg.className = `chat-msg ${type}`;
+                if (animate) {
+                    msg.style.opacity = '0';
+                    msg.style.transform = 'translateY(10px)';
+                    msg.style.animation = 'chatMsgIn 0.4s ease forwards';
+                } else {
+                    msg.style.opacity = '1';
+                    msg.style.transform = 'none';
+                }
+                // Format agent text — handle markdown-like formatting
+                let formatted = text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>');
+                msg.innerHTML = formatted;
+                body.appendChild(msg);
+                body.scrollTop = body.scrollHeight;
+                return msg;
+            },
+
+            // Show typing indicator
+            showTyping() {
+                this.removeTyping();
+                const body = document.getElementById('chatDemoBody');
+                const typing = document.createElement('div');
+                typing.className = 'typing-indicator';
+                typing.id = 'agentTyping';
+                typing.innerHTML = '<span></span><span></span><span></span>';
+                body.appendChild(typing);
+                body.scrollTop = body.scrollHeight;
+            },
+
+            removeTyping() {
+                const t = document.getElementById('agentTyping');
+                if (t) t.remove();
+            },
+
+            // Toggle input enabled/disabled
+            setInputEnabled(enabled) {
+                const input = document.getElementById('liveAgentInput');
+                const btn = document.getElementById('liveSendBtn');
+                if (input) {
+                    input.disabled = !enabled;
+                    input.style.opacity = enabled ? '1' : '0.5';
+                    if (enabled) input.focus();
+                }
+                if (btn) btn.disabled = !enabled;
+            },
+
+            // ===== STEP 1: Get access token =====
+            async getToken() {
+                this.setStatus('Connecting...', '#ffd700');
+                try {
+                    const res = await fetch('/api/agent/token', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    const data = await res.json();
+                    if (data.accessToken) {
+                        this.accessToken = data.accessToken;
+                        console.log('Got access token');
+                        return true;
+                    }
+                    console.error('No access token in response:', data);
+                    return false;
+                } catch (err) {
+                    console.error('Token error:', err);
+                    return false;
+                }
+            },
+
+            // ===== STEP 2: Start SSE stream =====
+            startSSE() {
+                if (this.sseSource) {
+                    this.sseSource.close();
+                }
+
+                const url = `/api/agent/sse?token=${encodeURIComponent(this.accessToken)}`;
+                this.sseSource = new EventSource(url);
+
+                this.sseSource.onopen = () => {
+                    console.log('SSE connected');
+                    this.isConnected = true;
+                    this.setStatus('Online', '#00d26a');
+                    this.setInputEnabled(true);
+                };
+
+                this.sseSource.onmessage = (event) => {
+                    this.handleSSEEvent(event);
+                };
+
+                this.sseSource.onerror = (err) => {
+                    console.log('SSE error/closed — will reconnect if needed');
+                    if (this.isConnected) {
+                        this.setStatus('Reconnecting...', '#ffd700');
+                        // Try reconnecting after a short delay
+                        setTimeout(() => {
+                            if (!this.isConnected) this.startSSE();
+                        }, 3000);
+                    }
+                };
+            },
+
+            // ===== STEP 3: Handle SSE events =====
+            handleSSEEvent(event) {
+                try {
+                    // The SSE proxy might send raw data or JSON
+                    const raw = event.data;
+                    if (!raw || raw === ':ok' || raw.trim() === '') return;
+
+                    let data;
+                    try { data = JSON.parse(raw); } catch { return; }
+
+                    const eventType = data.conversationEntry?.entryType || data.type || '';
+
+                    switch (eventType) {
+                        case 'Message':
+                        case 'CONVERSATION_MESSAGE':
+                            this.handleAgentMessage(data);
+                            break;
+
+                        case 'TypingStartedIndicator':
+                        case 'CONVERSATION_TYPING_STARTED_INDICATOR':
+                            this.showTyping();
+                            break;
+
+                        case 'TypingStoppedIndicator':
+                        case 'CONVERSATION_TYPING_STOPPED_INDICATOR':
+                            // Don't remove typing yet — wait for the message
+                            break;
+
+                        case 'ParticipantChanged':
+                        case 'CONVERSATION_PARTICIPANT_CHANGED':
+                            console.log('Participant changed:', data);
+                            break;
+
+                        case 'RoutingResult':
+                        case 'CONVERSATION_ROUTING_RESULT':
+                            console.log('Routing result:', data);
+                            break;
+
+                        case 'CloseConversation':
+                        case 'CONVERSATION_CLOSE_CONVERSATION':
+                            this.setStatus('Conversation ended', '#999');
+                            break;
+
+                        default:
+                            console.log('SSE event:', eventType, data);
+                    }
+                } catch (err) {
+                    console.log('SSE parse error:', err);
+                }
+            },
+
+            handleAgentMessage(data) {
+                this.removeTyping();
+
+                // Extract text from various SCRT2 message formats
+                let text = '';
+                const entry = data.conversationEntry || data;
+
+                // Format 1: entryPayload as JSON string
+                if (entry.entryPayload) {
+                    try {
+                        const payload = typeof entry.entryPayload === 'string'
+                            ? JSON.parse(entry.entryPayload)
+                            : entry.entryPayload;
+
+                        // Check if it's from the agent (not echo of user message)
+                        const role = entry.sender?.role || payload.sender?.role || '';
+                        const appType = entry.sender?.appType || payload.sender?.appType || '';
+                        if (role === 'EndUser' || appType === 'custom') return; // Skip user echo
+
+                        text = payload.abstractMessage?.staticContent?.text
+                            || payload.abstractMessage?.text
+                            || payload.staticContent?.text
+                            || payload.text
+                            || '';
+                    } catch {
+                        text = entry.entryPayload;
+                    }
+                }
+
+                // Format 2: direct message field
+                if (!text && entry.message) {
+                    const msg = entry.message;
+                    text = msg.staticContent?.text || msg.text || '';
+                }
+
+                // Format 3: content field
+                if (!text && data.content) {
+                    text = typeof data.content === 'string' ? data.content : JSON.stringify(data.content);
+                }
+
+                if (text && text.trim()) {
+                    this.addMessage(text.trim(), 'agent');
+                    this.setInputEnabled(true);
+                }
+            },
+
+            // ===== STEP 4: Create conversation =====
+            async createConversation() {
+                this.conversationId = this.uuid();
+                try {
+                    const res = await fetch('/api/agent/conversation', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            accessToken: this.accessToken,
+                            conversationId: this.conversationId
+                        })
+                    });
+                    if (res.ok) {
+                        console.log('Conversation created:', this.conversationId);
+                        return true;
+                    }
+                    const err = await res.text();
+                    console.error('Create conversation error:', res.status, err);
+                    return false;
+                } catch (err) {
+                    console.error('Create conversation error:', err);
+                    return false;
+                }
+            },
+
+            // ===== STEP 5: Send message =====
+            async sendMessage(text) {
+                if (!text.trim() || !this.accessToken || !this.conversationId) return;
+
+                // Add user message to UI
+                this.addMessage(text, 'user');
+                this.setInputEnabled(false);
+                this.showTyping();
+
+                try {
+                    const res = await fetch('/api/agent/message', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            accessToken: this.accessToken,
+                            conversationId: this.conversationId,
+                            text: text,
+                            messageId: this.uuid(),
+                            isNewSession: this.isFirstMessage
+                        })
+                    });
+
+                    if (!res.ok) {
+                        const errText = await res.text();
+                        console.error('Send message error:', res.status, errText);
+                        this.removeTyping();
+                        this.addMessage('Sorry, there was an issue sending your message. Please try again.', 'agent');
+                        this.setInputEnabled(true);
+                    }
+
+                    this.isFirstMessage = false;
+
+                    // Set a safety timeout — if no agent response in 30s, re-enable input
+                    setTimeout(() => {
+                        this.setInputEnabled(true);
+                    }, 30000);
+
+                } catch (err) {
+                    console.error('Send error:', err);
+                    this.removeTyping();
+                    this.addMessage('Connection error. Please try again.', 'agent');
+                    this.setInputEnabled(true);
+                }
+            },
+
+            // ===== INITIALIZE =====
+            async init() {
+                this.setInputEnabled(false);
+                this.setStatus('Connecting...', '#ffd700');
+
+                const gotToken = await this.getToken();
+                if (!gotToken) {
+                    this.setStatus('Connection failed', '#ff4444');
+                    this.addMessage('Unable to connect to the Nike Assistant. Please refresh the page to try again.', 'agent');
+                    return;
+                }
+
+                // Start SSE before creating conversation
+                this.startSSE();
+
+                // Small delay to let SSE establish
+                await new Promise(r => setTimeout(r, 1000));
+
+                const created = await this.createConversation();
+                if (!created) {
+                    this.setStatus('Connection failed', '#ff4444');
+                    this.addMessage('Unable to start a conversation. Please refresh the page.', 'agent');
+                    return;
+                }
+
+                this.setStatus('Online', '#00d26a');
+                this.setInputEnabled(true);
+            },
+
+            // ===== RESET =====
+            async reset() {
+                // Close existing conversation
+                if (this.conversationId && this.accessToken) {
+                    try {
+                        await fetch(`/api/agent/conversation/${this.conversationId}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${this.accessToken}` }
+                        });
+                    } catch {}
+                }
+
+                if (this.sseSource) {
+                    this.sseSource.close();
+                    this.sseSource = null;
+                }
+
+                this.accessToken = null;
+                this.conversationId = null;
+                this.isConnected = false;
+                this.isFirstMessage = true;
+                this.lastAgentMsgEl = null;
+
+                const body = document.getElementById('chatDemoBody');
+                body.innerHTML = '';
+                this.addMessage('👋 Hi! I\'m your Nike Assistant, powered by Agentforce. Ask me anything about products, orders, returns, or take a style quiz!', 'agent', false);
+
+                await this.init();
+            }
         };
 
-        let currentScenario = null;
-        let scenarioTimeouts = [];
-
-        function playScenario(name) {
-            // Clear any running scenario
-            scenarioTimeouts.forEach(t => clearTimeout(t));
-            scenarioTimeouts = [];
-
-            // Update active tab
-            document.querySelectorAll('.scenario-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-
-            const body = document.getElementById('chatDemoBody');
-            body.innerHTML = '';
-            currentScenario = name;
-
-            const messages = scenarios[name];
-            let cumulativeDelay = 0;
-
-            messages.forEach((msg, index) => {
-                cumulativeDelay += msg.delay;
-
-                // Show typing indicator before agent messages
-                if (msg.type === 'agent') {
-                    const typingDelay = cumulativeDelay - 800;
-                    const tid1 = setTimeout(() => {
-                        if (currentScenario !== name) return;
-                        const typing = document.createElement('div');
-                        typing.className = 'typing-indicator';
-                        typing.id = 'typing-' + index;
-                        typing.innerHTML = '<span></span><span></span><span></span>';
-                        body.appendChild(typing);
-                        body.scrollTop = body.scrollHeight;
-                    }, Math.max(typingDelay, 0));
-                    scenarioTimeouts.push(tid1);
-                }
-
-                const tid2 = setTimeout(() => {
-                    if (currentScenario !== name) return;
-                    // Remove typing indicator
-                    const typingEl = document.getElementById('typing-' + index);
-                    if (typingEl) typingEl.remove();
-
-                    const msgEl = document.createElement('div');
-                    msgEl.className = 'chat-msg ' + msg.type;
-                    msgEl.innerHTML = msg.text.replace(/\n/g, '<br>');
-                    body.appendChild(msgEl);
-                    body.scrollTop = body.scrollHeight;
-                }, cumulativeDelay);
-                scenarioTimeouts.push(tid2);
-            });
-
-            // Auto-replay after completion
-            const replayDelay = cumulativeDelay + 6000;
-            const tid3 = setTimeout(() => {
-                if (currentScenario === name) playScenario(name);
-            }, replayDelay);
-            scenarioTimeouts.push(tid3);
+        // ===== UI BINDINGS =====
+        function sendLiveMessage() {
+            const input = document.getElementById('liveAgentInput');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            AgentChat.sendMessage(text);
         }
 
-        // Auto-start the shopping scenario when visible
-        const liveAgentObserver = new IntersectionObserver((entries) => {
+        function sendQuickPrompt(text) {
+            const input = document.getElementById('liveAgentInput');
+            // Scroll to chat
+            document.getElementById('live-agent').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                if (AgentChat.isConnected && AgentChat.conversationId) {
+                    AgentChat.sendMessage(text);
+                } else {
+                    input.value = text;
+                    input.focus();
+                }
+            }, 500);
+        }
+
+        function resetChat() {
+            AgentChat.reset();
+        }
+
+        // ===== AUTO-INITIALIZE when section becomes visible =====
+        let chatInitialized = false;
+        const chatObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting && !currentScenario) {
-                    playScenario('shopping');
-                    // Set the first tab as active
-                    document.querySelector('.scenario-tab').classList.add('active');
+                if (entry.isIntersecting && !chatInitialized) {
+                    chatInitialized = true;
+                    AgentChat.init();
                 }
             });
-        }, { threshold: 0.3 });
+        }, { threshold: 0.2 });
 
-        const liveAgentSection = document.getElementById('live-agent');
-        if (liveAgentSection) liveAgentObserver.observe(liveAgentSection);
+        const liveSec = document.getElementById('live-agent');
+        if (liveSec) chatObserver.observe(liveSec);
+
+        // Also allow chat trigger button to initialize
+        document.getElementById('chatTrigger').addEventListener('click', () => {
+            if (!chatInitialized) {
+                chatInitialized = true;
+                AgentChat.init();
+            }
+        });
     </script>
 
 </body>

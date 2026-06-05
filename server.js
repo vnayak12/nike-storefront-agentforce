@@ -2,9 +2,15 @@ const express = require('express');
 const compression = require('compression');
 const helmet = require('helmet');
 const path = require('path');
+const https = require('https');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// SCRT2 Configuration
+const SCRT2_DOMAIN = 'trailsignup-d7fd90d7f30b8a.my.salesforce-scrt.com';
+const ORG_ID = '00Dbm00000jtzs9';
+const ES_DEVELOPER_NAME = 'Nike_CS_Web_Chat';
 
 // Security headers with CSP allowing Salesforce MIAW widget
 app.use(helmet({
@@ -65,6 +71,175 @@ app.use(helmet({
 app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+
+// ===== SCRT2 PROXY ROUTES =====
+
+// Helper: make HTTPS request to SCRT2
+function scrt2Request(method, urlPath, headers, body) {
+    return new Promise((resolve, reject) => {
+        const options = {
+            hostname: SCRT2_DOMAIN,
+            path: urlPath,
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                ...headers
+            }
+        };
+        const req = https.request(options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => { data += chunk; });
+            res.on('end', () => {
+                resolve({ statusCode: res.statusCode, headers: res.headers, body: data });
+            });
+        });
+        req.on('error', reject);
+        if (body) req.write(typeof body === 'string' ? body : JSON.stringify(body));
+        req.end();
+    });
+}
+
+// 1. Get unauthenticated access token
+app.post('/api/agent/token', async (req, res) => {
+    try {
+        const result = await scrt2Request('POST',
+            '/iamessage/api/v2/authorization/unauthenticated/access-token',
+            {},
+            {
+                orgId: ORG_ID,
+                esDeveloperName: ES_DEVELOPER_NAME,
+                capabilitiesVersion: '1',
+                platform: 'Web'
+            }
+        );
+        res.status(result.statusCode).json(JSON.parse(result.body));
+    } catch (err) {
+        console.error('Token error:', err.message);
+        res.status(500).json({ error: 'Failed to get token' });
+    }
+});
+
+// 2. Create conversation
+app.post('/api/agent/conversation', async (req, res) => {
+    try {
+        const { accessToken, conversationId } = req.body;
+        const result = await scrt2Request('POST',
+            '/iamessage/api/v2/conversation',
+            { 'Authorization': `Bearer ${accessToken}` },
+            {
+                conversationId: conversationId,
+                esDeveloperName: ES_DEVELOPER_NAME,
+                routingAttributes: {
+                    _firstName: 'Nike',
+                    _lastName: 'Shopper'
+                }
+            }
+        );
+        res.status(result.statusCode).send(result.body);
+    } catch (err) {
+        console.error('Conversation error:', err.message);
+        res.status(500).json({ error: 'Failed to create conversation' });
+    }
+});
+
+// 3. Send message
+app.post('/api/agent/message', async (req, res) => {
+    try {
+        const { accessToken, conversationId, text, messageId, isNewSession } = req.body;
+        const result = await scrt2Request('POST',
+            `/iamessage/api/v2/conversation/${conversationId}/message`,
+            { 'Authorization': `Bearer ${accessToken}` },
+            {
+                message: {
+                    id: messageId,
+                    messageType: 'StaticContentMessage',
+                    staticContent: {
+                        formatType: 'Text',
+                        text: text
+                    }
+                },
+                esDeveloperName: ES_DEVELOPER_NAME,
+                isNewMessagingSession: isNewSession || false,
+                routingAttributes: {},
+                language: 'en'
+            }
+        );
+        res.status(result.statusCode).send(result.body);
+    } catch (err) {
+        console.error('Message error:', err.message);
+        res.status(500).json({ error: 'Failed to send message' });
+    }
+});
+
+// 4. SSE proxy — streams events from SCRT2 to the browser
+app.get('/api/agent/sse', (req, res) => {
+    const accessToken = req.query.token;
+    if (!accessToken) {
+        return res.status(400).json({ error: 'Missing token' });
+    }
+
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'X-Accel-Buffering': 'no'
+    });
+    res.write(':ok\n\n');
+
+    const options = {
+        hostname: SCRT2_DOMAIN,
+        path: '/eventrouter/v1/sse',
+        method: 'GET',
+        headers: {
+            'Accept': 'text/event-stream',
+            'Authorization': `Bearer ${accessToken}`,
+            'X-Org-Id': ORG_ID
+        }
+    };
+
+    const sseReq = https.request(options, (sseRes) => {
+        sseRes.on('data', (chunk) => {
+            res.write(chunk);
+        });
+        sseRes.on('end', () => {
+            res.end();
+        });
+        sseRes.on('error', (err) => {
+            console.error('SSE upstream error:', err.message);
+            res.end();
+        });
+    });
+
+    sseReq.on('error', (err) => {
+        console.error('SSE request error:', err.message);
+        res.end();
+    });
+
+    sseReq.end();
+
+    req.on('close', () => {
+        sseReq.destroy();
+    });
+});
+
+// 5. Close conversation
+app.delete('/api/agent/conversation/:conversationId', async (req, res) => {
+    try {
+        const { conversationId } = req.params;
+        const accessToken = req.headers.authorization?.replace('Bearer ', '');
+        const result = await scrt2Request('DELETE',
+            `/iamessage/api/v2/conversation/${conversationId}?esDeveloperName=${ES_DEVELOPER_NAME}`,
+            { 'Authorization': `Bearer ${accessToken}` },
+            null
+        );
+        res.status(result.statusCode).send(result.body || '{}');
+    } catch (err) {
+        console.error('Close error:', err.message);
+        res.status(500).json({ error: 'Failed to close conversation' });
+    }
+});
+
+// ===== MAIN ROUTES =====
 
 // Main storefront route
 app.get('/', (req, res) => {
