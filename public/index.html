@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nike. Just Do It.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✓</text></svg>">
+    <style>
+        :root {
+            --nike-black: #111111;
+            --nike-white: #ffffff;
+            --nike-gray: #757575;
+            --nike-light-gray: #f5f5f5;
+            --nike-orange: #fa5400;
+            --nike-green: #3b7a57;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+            color: var(--nike-black);
+            background: var(--nike-white);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Banner */
+        .top-banner {
+            background: var(--nike-black);
+            color: var(--nike-white);
+            text-align: center;
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .top-banner a {
+            color: var(--nike-white);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* Navigation */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 40px;
+            background: var(--nike-white);
+            border-bottom: 1px solid #e5e5e5;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nike-logo {
+            width: 60px;
+            height: 22px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--nike-black);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: -0.2px;
+            padding: 8px 0;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .nav-links a:hover {
+            border-color: var(--nike-black);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--nike-light-gray);
+            border-radius: 100px;
+            padding: 8px 16px;
+            width: 180px;
+            transition: width 0.3s;
+        }
+
+        .search-bar:focus-within {
+            width: 260px;
+        }
+
+        .search-bar input {
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 14px;
+            width: 100%;
+            margin-left: 8px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: var(--nike-light-gray);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 85vh;
+            min-height: 600px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            padding: 40px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--nike-orange);
+            color: var(--nike-white);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 80px;
+            font-weight: 900;
+            letter-spacing: -3px;
+            line-height: 0.95;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--nike-gray);
+            max-width: 500px;
+            margin: 0 auto 32px;
+            line-height: 1.6;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: var(--nike-black);
+            color: var(--nike-white);
+            padding: 16px 32px;
+            border-radius: 100px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.85;
+            transform: scale(1.02);
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            background: var(--nike-white);
+            color: var(--nike-black);
+            padding: 16px 32px;
+            border-radius: 100px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 2px solid var(--nike-black);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--nike-black);
+            color: var(--nike-white);
+        }
+
+        /* Category Cards */
+        .section {
+            padding: 80px 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .section h2 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .section-link {
+            color: var(--nike-gray);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .section-link:hover {
+            color: var(--nike-black);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .product-card {
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .product-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            background: var(--nike-light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            border-radius: 12px;
+        }
+
+        .product-info {
+            padding: 16px 0;
+        }
+
+        .product-tag {
+            color: var(--nike-orange);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .product-category {
+            color: var(--nike-gray);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .product-price {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Categories Row */
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding: 0 40px 60px;
+        }
+
+        .category-card {
+            position: relative;
+            aspect-ratio: 1.3;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--nike-light-gray);
+            display: flex;
+            align-items: flex-end;
+            padding: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .category-card:hover {
+            transform: scale(1.02);
+        }
+
+        .category-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--nike-black);
+        }
+
+        .category-emoji {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            font-size: 48px;
+        }
+
+        /* Membership Banner */
+        .membership-banner {
+            background: var(--nike-black);
+            color: var(--nike-white);
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .membership-banner h2 {
+            font-size: 48px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        .membership-banner p {
+            font-size: 18px;
+            color: #999;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            line-height: 1.6;
+        }
+
+        .perks-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 900px;
+            margin: 40px auto 0;
+        }
+
+        .perk {
+            text-align: center;
+        }
+
+        .perk-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .perk h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .perk p {
+            font-size: 12px;
+            color: #666;
+            margin: 0;
+        }
+
+        /* Nike Agent Chat Section */
+        .agent-section {
+            background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+            padding: 80px 40px;
+            text-align: center;
+        }
+
+        .agent-section h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .agent-section p {
+            font-size: 16px;
+            color: var(--nike-gray);
+            max-width: 600px;
+            margin: 0 auto 32px;
+            line-height: 1.6;
+        }
+
+        .agent-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .agent-feature {
+            background: var(--nike-white);
+            border-radius: 16px;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .agent-feature .emoji {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .agent-feature h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .agent-feature p {
+            font-size: 14px;
+            color: var(--nike-gray);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--nike-black);
+            color: var(--nike-white);
+            padding: 60px 40px 30px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .footer ul {
+            list-style: none;
+        }
+
+        .footer li {
+            margin-bottom: 12px;
+        }
+
+        .footer a {
+            color: #999;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: var(--nike-white);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-bottom p {
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* Chat trigger button */
+        .chat-trigger-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--nike-black);
+            color: var(--nike-white);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 9998;
+            transition: transform 0.2s, background 0.2s;
+            font-size: 24px;
+        }
+
+        .chat-trigger-btn:hover {
+            transform: scale(1.1);
+            background: #333;
+        }
+
+        .chat-trigger-btn .tooltip {
+            position: absolute;
+            right: 70px;
+            background: var(--nike-black);
+            color: var(--nike-white);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .chat-trigger-btn:hover .tooltip {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 48px; }
+            .categories { grid-template-columns: repeat(2, 1fr); }
+            .product-grid { grid-template-columns: repeat(2, 1fr); }
+            .perks-grid { grid-template-columns: repeat(2, 1fr); }
+            .agent-features { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+            .navbar { padding: 12px 20px; }
+            .section { padding: 40px 20px; }
+            .nav-links { display: none; }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+
+    <!-- Top Banner -->
+    <div class="top-banner">
+        New Styles on Sale: Up to 40% Off &nbsp;|&nbsp; <a onclick="openChat()">Chat with Nike Assistant</a> for personalized picks
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <svg class="nike-logo" viewBox="0 0 69 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M68.56 4.05C53.1 13.55 38.22 23.81 22.17 31.43C17.94 33.3 12.04 34.54 8.43 31.08C5.47 28.11 5.87 23.16 7.17 19.47C10.59 10.44 17.2 3.16 24.67 0.18C25.42-0.08 26.37-0.06 26.87 0.65C27.2 1.31 26.63 2.01 26.13 2.41C20.91 6.43 16.81 11.72 14.39 17.72C13.27 20.46 12.58 24.05 14.47 26.5C16.41 28.79 19.8 28.4 22.34 27.24C29.17 24.14 35.31 19.63 41.71 15.55C50.53 9.95 59.48 4.57 68.56 4.05Z" fill="#111111"/>
+        </svg>
+
+        <ul class="nav-links">
+            <li><a href="#" data-category="all">New & Featured</a></li>
+            <li><a href="#" data-category="Running">Running</a></li>
+            <li><a href="#" data-category="Basketball">Basketball</a></li>
+            <li><a href="#" data-category="Lifestyle">Lifestyle</a></li>
+            <li><a href="#" data-category="Training">Training</a></li>
+            <li><a href="#" data-category="Sale" style="color: var(--nike-orange);">Sale</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <div class="search-bar">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5"/><line x1="11" y1="11" x2="15" y2="15"/></svg>
+                <input type="text" placeholder="Search" id="searchInput">
+            </div>
+            <button class="icon-btn" title="Favorites">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+            <button class="icon-btn" title="Cart" style="position: relative;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <span style="position: absolute; top: 0; right: 0; background: var(--nike-orange); color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700;">2</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-badge animate-in">✨ AI-Powered Shopping</span>
+            <h1 class="animate-in delay-1">JUST DO IT.</h1>
+            <p class="animate-in delay-2">Experience Nike like never before. Our AI Shopping Assistant helps you find the perfect gear, get personalized recommendations, and track your orders — all in one place.</p>
+            <div class="animate-in delay-3">
+                <a href="#products" class="btn-primary">Shop Now</a>
+                <button class="btn-secondary" onclick="openChat()">💬 Ask Nike Assistant</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <div class="categories" id="categories">
+        <div class="category-card" style="background: #f0e6d3;" onclick="filterProducts('Running')">
+            <h3>Running</h3>
+            <span class="category-emoji">🏃</span>
+        </div>
+        <div class="category-card" style="background: #d4e5f7;" onclick="filterProducts('Basketball')">
+            <h3>Basketball</h3>
+            <span class="category-emoji">🏀</span>
+        </div>
+        <div class="category-card" style="background: #e8d5e8;" onclick="filterProducts('Lifestyle')">
+            <h3>Lifestyle</h3>
+            <span class="category-emoji">👟</span>
+        </div>
+        <div class="category-card" style="background: #d5e8d4;" onclick="filterProducts('Training')">
+            <h3>Training</h3>
+            <span class="category-emoji">💪</span>
+        </div>
+    </div>
+
+    <!-- Featured Products -->
+    <section class="section" id="products">
+        <div class="section-header">
+            <h2 id="product-section-title">Popular Right Now</h2>
+            <a href="#" class="section-link" onclick="filterProducts('all'); return false;">View All →</a>
+        </div>
+        <div class="product-grid" id="productGrid">
+            <!-- Products populated by JS -->
+        </div>
+    </section>
+
+    <!-- Agent Section -->
+    <section class="agent-section">
+        <h2>Meet Your Nike Assistant</h2>
+        <p>Powered by Agentforce, our AI assistant knows Nike inside and out. Get help before, during, and after your purchase.</p>
+
+        <div class="agent-features">
+            <div class="agent-feature">
+                <div class="emoji">🛍️</div>
+                <h3>Product Recommendations</h3>
+                <p>Get personalized picks based on your sport, style, and budget. Our assistant learns what you love.</p>
+            </div>
+            <div class="agent-feature">
+                <div class="emoji">🔄</div>
+                <h3>Cross-Sell & Upsell</h3>
+                <p>Complete your look with matching accessories or upgrade to premium gear — with exclusive member discounts.</p>
+            </div>
+            <div class="agent-feature">
+                <div class="emoji">📦</div>
+                <h3>Order Support</h3>
+                <p>Track orders, initiate returns, change sizes, and more. 24/7 support in 7 languages.</p>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="openChat()" style="margin-top: 24px;">
+            💬 Start a Conversation
+        </button>
+    </section>
+
+    <!-- Membership -->
+    <section class="membership-banner">
+        <h2>Nike Membership</h2>
+        <p>Unlock exclusive access, member-only products, and personalized recommendations when you join for free.</p>
+        <a href="#" class="btn-primary" style="background: var(--nike-white); color: var(--nike-black);">Join Us</a>
+        <a href="#" class="btn-secondary" style="border-color: var(--nike-white); color: var(--nike-white);">Sign In</a>
+
+        <div class="perks-grid">
+            <div class="perk">
+                <div class="perk-icon">🎁</div>
+                <h4>Member Rewards</h4>
+                <p>Birthday discounts & exclusive offers</p>
+            </div>
+            <div class="perk">
+                <div class="perk-icon">🚚</div>
+                <h4>Free Shipping</h4>
+                <p>On orders over $50</p>
+            </div>
+            <div class="perk">
+                <div class="perk-icon">🔓</div>
+                <h4>Early Access</h4>
+                <p>Shop new drops before anyone</p>
+            </div>
+            <div class="perk">
+                <div class="perk-icon">🏅</div>
+                <h4>Member Products</h4>
+                <p>Exclusive colorways & collabs</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div>
+                <h4>Get Help</h4>
+                <ul>
+                    <li><a href="#" onclick="openChat(); return false;">Chat with Assistant</a></li>
+                    <li><a href="#">Order Status</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">Shipping & Delivery</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>About Nike</h4>
+                <ul>
+                    <li><a href="#">News</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Investors</a></li>
+                    <li><a href="#">Sustainability</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Promotions & Discounts</h4>
+                <ul>
+                    <li><a href="#">Student</a></li>
+                    <li><a href="#">Military</a></li>
+                    <li><a href="#">Teacher</a></li>
+                    <li><a href="#">First Responders</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">Gift Cards</a></li>
+                    <li><a href="#">Nike Journal</a></li>
+                    <li><a href="#">Site Feedback</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Nike, Inc. All Rights Reserved</p>
+            <p>This is a demo storefront powered by Salesforce Agentforce</p>
+        </div>
+    </footer>
+
+    <!-- Chat Trigger Button (visible when ESW widget is not shown) -->
+    <button class="chat-trigger-btn" id="chatTrigger" onclick="openChat()">
+        💬
+        <span class="tooltip">Chat with Nike Assistant</span>
+    </button>
+
+    <!-- Salesforce Embedded Messaging Widget -->
+    <script>
+        // ===== PRODUCT DATA =====
+        const products = [
+            { id: 1, name: "Nike Pegasus 41", category: "Running", tag: "Just In", price: "$139.99", emoji: "👟", color: "#f0e6d3" },
+            { id: 2, name: "Nike Vaporfly 3", category: "Running", tag: "Best Seller", price: "$259.99", emoji: "🏃", color: "#e8d5d5" },
+            { id: 3, name: "Nike LeBron XXI", category: "Basketball", tag: "New Release", price: "$199.99", emoji: "🏀", color: "#d4e5f7" },
+            { id: 4, name: "Air Force 1 '07", category: "Lifestyle", tag: "Iconic", price: "$114.99", emoji: "✨", color: "#f5f5f5" },
+            { id: 5, name: "Nike Dunk Low Retro", category: "Lifestyle", tag: "Trending", price: "$109.99", emoji: "🔥", color: "#e8d5e8" },
+            { id: 6, name: "Nike Metcon 9", category: "Training", tag: "Top Rated", price: "$149.99", emoji: "💪", color: "#d5e8d4" },
+            { id: 7, name: "Air Jordan 1 Retro High OG", category: "Lifestyle", tag: "Legend", price: "$179.99", emoji: "👑", color: "#f0e6d3" },
+            { id: 8, name: "Nike Vomero 18", category: "Running", tag: "Comfort Pick", price: "$159.99", emoji: "☁️", color: "#d4e5f7" },
+            { id: 9, name: "Nike Air Max 90", category: "Lifestyle", tag: "Classic", price: "$129.99", emoji: "🌈", color: "#e8e5d5" },
+            { id: 10, name: "Air Jordan XXXIX", category: "Basketball", tag: "Performance", price: "$209.99", emoji: "⚡", color: "#d5d5e8" },
+            { id: 11, name: "Nike Alphafly 3", category: "Running", tag: "Elite", price: "$284.99", emoji: "🏆", color: "#f5e5d5" },
+            { id: 12, name: "Nike Metcon 9 FlyEase", category: "Training", tag: "Innovation", price: "$159.99", emoji: "🔧", color: "#d5e8e8" }
+        ];
+
+        function renderProducts(filter = 'all') {
+            const grid = document.getElementById('productGrid');
+            const title = document.getElementById('product-section-title');
+
+            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+            title.textContent = filter === 'all' ? 'Popular Right Now' : filter;
+
+            grid.innerHTML = filtered.map(p => `
+                <div class="product-card" onclick="askAboutProduct('${p.name}')">
+                    <div class="product-image" style="background: ${p.color};">${p.emoji}</div>
+                    <div class="product-info">
+                        <div class="product-tag">${p.tag}</div>
+                        <div class="product-name">${p.name}</div>
+                        <div class="product-category">${p.category} Shoes</div>
+                        <div class="product-price">${p.price}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterProducts(category) {
+            renderProducts(category);
+            document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialize products
+        renderProducts();
+
+        // ===== EMBEDDED SERVICE (MIAW) =====
+        function openChat() {
+            try {
+                if (window.embeddedservice_bootstrap) {
+                    // Try to maximize the chat widget
+                    const chatBtn = document.querySelector('.embeddedServiceHelpButton .helpButton button') ||
+                                    document.querySelector('[embeddedService-chatHeader-chatButton]') ||
+                                    document.querySelector('.embeddedMessagingFrame');
+
+                    // Try Messaging for Web approach
+                    if (typeof embeddedservice_bootstrap.utilAPI !== 'undefined') {
+                        embeddedservice_bootstrap.utilAPI.launchChat();
+                    } else {
+                        // Fallback: simulate click on the embedded button
+                        const eswButtons = document.querySelectorAll('button');
+                        for (let btn of eswButtons) {
+                            if (btn.closest('.embeddedMessagingConversationButton') ||
+                                btn.closest('[class*="embeddedMessaging"]')) {
+                                btn.click();
+                                return;
+                            }
+                        }
+                        // Last resort: look for any SF chat-related element
+                        const frame = document.querySelector('[class*="embeddedMessaging"]');
+                        if (frame) frame.click();
+                    }
+                }
+            } catch (e) {
+                console.log('Chat widget interaction:', e);
+            }
+        }
+
+        function askAboutProduct(productName) {
+            openChat();
+            // The user can then type their question about the product in the chat
+            console.log('Product inquiry for:', productName);
+        }
+
+        // ===== LOAD SALESFORCE MIAW WIDGET =====
+        function initEmbeddedMessaging() {
+            try {
+                embeddedservice_bootstrap.settings.language = 'en_US';
+                embeddedservice_bootstrap.init(
+                    '00Dbm00000jtzs9EAA',
+                    'Nike_CS_Web_Chat',
+                    'https://trailsignup-d7fd90d7f30b8a.my.site.com/ESWNikeCSWebChat1780609842315',
+                    {
+                        scrt2URL: 'https://trailsignup-d7fd90d7f30b8a.my.salesforce-scrt.com'
+                    }
+                );
+                console.log('MIAW widget initialized successfully');
+
+                // Hide our custom chat button once the SF widget loads
+                setTimeout(() => {
+                    const sfChat = document.querySelector('[class*="embeddedMessaging"]');
+                    if (sfChat) {
+                        document.getElementById('chatTrigger').style.display = 'none';
+                    }
+                }, 3000);
+            } catch (err) {
+                console.error('Error loading Messaging for Web widget:', err);
+            }
+        }
+
+        // Load the ESW bootstrap script
+        const eswScript = document.createElement('script');
+        eswScript.src = 'https://trailsignup-d7fd90d7f30b8a.my.site.com/ESWNikeCSWebChat1780609842315/assets/js/bootstrap.min.js';
+        eswScript.type = 'text/javascript';
+        eswScript.onload = initEmbeddedMessaging;
+        eswScript.onerror = function() {
+            console.log('Could not load MIAW bootstrap script — chat will not be available');
+        };
+        document.body.appendChild(eswScript);
+
+        // ===== SEARCH =====
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim().toLowerCase();
+                const filtered = products.filter(p =>
+                    p.name.toLowerCase().includes(query) ||
+                    p.category.toLowerCase().includes(query)
+                );
+
+                const grid = document.getElementById('productGrid');
+                const title = document.getElementById('product-section-title');
+                title.textContent = `Search: "${this.value}"`;
+
+                if (filtered.length === 0) {
+                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--nike-gray); padding: 60px 0;">No products found. Try <a href="#" onclick="openChat(); return false;" style="color: var(--nike-orange); cursor: pointer;">asking our Nike Assistant</a> for help!</p>';
+                } else {
+                    renderProducts('all');
+                    grid.innerHTML = filtered.map(p => `
+                        <div class="product-card" onclick="askAboutProduct('${p.name}')">
+                            <div class="product-image" style="background: ${p.color};">${p.emoji}</div>
+                            <div class="product-info">
+                                <div class="product-tag">${p.tag}</div>
+                                <div class="product-name">${p.name}</div>
+                                <div class="product-category">${p.category} Shoes</div>
+                                <div class="product-price">${p.price}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        // Nav links
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const cat = this.dataset.category;
+                if (cat) filterProducts(cat);
+            });
+        });
+    </script>
+
+</body>
+</html>
