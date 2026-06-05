@@ -1549,6 +1549,12 @@
 
                     if (typeof data !== 'object' || data === null) return;
 
+                    // Handle proxy error events
+                    if (data.error) {
+                        console.error('SSE proxy error:', data.error);
+                        return;
+                    }
+
                     const entry = data.conversationEntry;
                     if (!entry) return;
 
