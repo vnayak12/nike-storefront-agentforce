@@ -1461,9 +1461,13 @@
             },
 
             // ===== STEP 2: Start SSE stream =====
+            sseRetryCount: 0,
+            sseMaxRetries: 5,
+
             startSSE() {
                 if (this.sseSource) {
                     this.sseSource.close();
+                    this.sseSource = null;
                 }
 
                 const url = `/api/agent/sse?token=${encodeURIComponent(this.accessToken)}`;
@@ -1471,6 +1475,7 @@
 
                 this.sseSource.onopen = () => {
                     console.log('SSE connected');
+                    this.sseRetryCount = 0;  // Reset on successful connect
                     this.isConnected = true;
                     this.setStatus('Online', '#00d26a');
                     this.setInputEnabled(true);
@@ -1501,14 +1506,27 @@
                 });
 
                 this.sseSource.onerror = (err) => {
-                    console.log('SSE error/closed — reconnecting');
+                    console.log('SSE error/closed');
                     this.sseSource.close();
                     this.sseSource = null;
+                    this.isConnected = false;
+
+                    this.sseRetryCount++;
+                    if (this.sseRetryCount > this.sseMaxRetries) {
+                        console.log('SSE max retries reached — giving up');
+                        this.setStatus('Disconnected', '#ff4444');
+                        this.setInputEnabled(false);
+                        return;
+                    }
+
+                    // Exponential backoff: 2s, 4s, 8s, 16s, 32s
+                    const delay = Math.min(2000 * Math.pow(2, this.sseRetryCount - 1), 32000);
+                    console.log(`SSE retry ${this.sseRetryCount}/${this.sseMaxRetries} in ${delay}ms`);
                     this.setStatus('Reconnecting...', '#ffd700');
-                    // Reconnect after short delay
+
                     setTimeout(() => {
                         if (this.accessToken) this.startSSE();
-                    }, 2000);
+                    }, delay);
                 };
             },
 

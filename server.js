@@ -181,32 +181,21 @@ app.post('/api/agent/message', async (req, res) => {
 });
 
 // 4. SSE proxy — streams events from SCRT2 to the browser
+// Key: defer 200 until upstream confirms, so browser gets real 503 on failures
 app.get('/api/agent/sse', (req, res) => {
     const accessToken = req.query.token;
     if (!accessToken) {
         return res.status(400).json({ error: 'Missing token' });
     }
 
-    res.writeHead(200, {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-        'X-Accel-Buffering': 'no'
-    });
-    res.write(':ok\n\n');
-
     let closed = false;
-
-    // Heroku has a 55s idle timeout — send keepalive pings every 20s
-    const keepalive = setInterval(() => {
-        if (closed) return;
-        try { res.write(':ping\n\n'); } catch {}
-    }, 20000);
+    let keepalive = null;
+    let headersSent = false;
 
     function cleanup(sseReq) {
         if (closed) return;
         closed = true;
-        clearInterval(keepalive);
+        if (keepalive) clearInterval(keepalive);
         if (sseReq) sseReq.destroy();
         try { res.end(); } catch {}
     }
@@ -215,7 +204,7 @@ app.get('/api/agent/sse', (req, res) => {
         hostname: SCRT2_DOMAIN,
         path: '/eventrouter/v1/sse',
         method: 'GET',
-        timeout: 0,  // No timeout for SSE
+        timeout: 30000,  // 30s connect timeout, then we keep alive
         headers: {
             'Accept': 'text/event-stream',
             'Authorization': `Bearer ${accessToken}`,
@@ -225,25 +214,45 @@ app.get('/api/agent/sse', (req, res) => {
 
     let buffer = '';
     const sseReq = https.request(options, (sseRes) => {
-        // If upstream returns non-200, pass through and close
+        // If upstream returns non-200, pass through the exact status
         if (sseRes.statusCode !== 200) {
             console.error('SSE upstream status:', sseRes.statusCode);
-            res.write(`data:{"error":"upstream_${sseRes.statusCode}"}\n\n`);
+            if (!headersSent) {
+                res.status(sseRes.statusCode).json({ error: `upstream_${sseRes.statusCode}` });
+                headersSent = true;
+            }
             cleanup(sseReq);
             return;
         }
 
+        // Upstream confirmed 200 — now start SSE to browser
+        if (!headersSent) {
+            res.writeHead(200, {
+                'Content-Type': 'text/event-stream',
+                'Cache-Control': 'no-cache',
+                'Connection': 'keep-alive',
+                'X-Accel-Buffering': 'no'
+            });
+            res.write(':ok\n\n');
+            headersSent = true;
+
+            // Heroku has a 55s idle timeout — send keepalive pings every 20s
+            keepalive = setInterval(() => {
+                if (closed) return;
+                try { res.write(':ping\n\n'); } catch {}
+            }, 20000);
+        }
+
+        // Disable timeout now that we're streaming
+        sseReq.setTimeout(0);
+
         sseRes.on('data', (chunk) => {
             if (closed) return;
-            // Buffer incoming data and process line by line
             buffer += chunk.toString();
             const lines = buffer.split('\n');
-            // Keep the last (potentially incomplete) line in the buffer
             buffer = lines.pop() || '';
 
             for (const line of lines) {
-                // Strip named event lines — this makes all events go through
-                // EventSource.onmessage so the browser can handle them uniformly
                 if (line.startsWith('event:')) continue;
                 try { res.write(line + '\n'); } catch {}
             }
@@ -257,12 +266,19 @@ app.get('/api/agent/sse', (req, res) => {
 
     sseReq.on('error', (err) => {
         console.error('SSE request error:', err.message);
+        if (!headersSent) {
+            res.status(502).json({ error: 'SSE upstream connection failed' });
+            headersSent = true;
+        }
         cleanup(sseReq);
     });
 
     sseReq.on('timeout', () => {
-        // Should not happen with timeout:0 but handle gracefully
-        console.error('SSE request timeout');
+        console.error('SSE connect timeout');
+        if (!headersSent) {
+            res.status(504).json({ error: 'SSE upstream timeout' });
+            headersSent = true;
+        }
         cleanup(sseReq);
     });
 
