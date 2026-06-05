@@ -1158,7 +1158,7 @@
         <h2>Nike Membership</h2>
         <p>Unlock exclusive access, member-only products, and personalized recommendations when you join for free.</p>
         <a href="#" class="btn-primary" style="background: var(--nike-white); color: var(--nike-black);">Join Us</a>
-        <a href="#" class="btn-secondary" style="border-color: var(--nike-white); color: var(--nike-white);">Sign In</a>
+        <a href="#" class="btn-secondary" style="background: transparent; border-color: var(--nike-white); color: var(--nike-white);">Sign In</a>
 
         <div class="perks-grid">
             <div class="perk">
@@ -1186,44 +1186,6 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-grid">
-            <div>
-                <h4>Get Help</h4>
-                <ul>
-                    <li><a href="#" onclick="openChat(); return false;">Chat with Assistant</a></li>
-                    <li><a href="#">Order Status</a></li>
-                    <li><a href="#">Returns</a></li>
-                    <li><a href="#">Shipping & Delivery</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4>About Nike</h4>
-                <ul>
-                    <li><a href="#">News</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Investors</a></li>
-                    <li><a href="#">Sustainability</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4>Promotions & Discounts</h4>
-                <ul>
-                    <li><a href="#">Student</a></li>
-                    <li><a href="#">Military</a></li>
-                    <li><a href="#">Teacher</a></li>
-                    <li><a href="#">First Responders</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4>Company</h4>
-                <ul>
-                    <li><a href="#">Gift Cards</a></li>
-                    <li><a href="#">Nike Journal</a></li>
-                    <li><a href="#">Site Feedback</a></li>
-                </ul>
-            </div>
-        </div>
         <div class="footer-bottom">
             <p>© 2026 Nike, Inc. All Rights Reserved</p>
             <p>This is a demo storefront powered by Salesforce Agentforce</p>
@@ -1464,129 +1426,148 @@
                 }
             },
 
-            // ===== STEP 2: Start SSE stream =====
+            // ===== STEP 2: Start SSE stream (fetch-based for reliable proxied SSE) =====
             sseRetryCount: 0,
             sseMaxRetries: 5,
+            sseAbortController: null,
 
-            startSSE() {
-                if (this.sseSource) {
-                    this.sseSource.close();
-                    this.sseSource = null;
+            async startSSE() {
+                // Abort any existing SSE connection
+                if (this.sseAbortController) {
+                    this.sseAbortController.abort();
+                    this.sseAbortController = null;
                 }
 
+                this.sseAbortController = new AbortController();
                 const url = `/api/agent/sse?token=${encodeURIComponent(this.accessToken)}`;
-                this.sseSource = new EventSource(url);
 
-                this.sseSource.onopen = () => {
-                    console.log('SSE connected');
-                    this.sseRetryCount = 0;  // Reset on successful connect
+                try {
+                    const response = await fetch(url, {
+                        signal: this.sseAbortController.signal,
+                        headers: { 'Accept': 'text/event-stream' }
+                    });
+
+                    if (!response.ok) {
+                        const errText = await response.text().catch(() => '');
+                        console.error('SSE response:', response.status, errText);
+                        throw new Error(`SSE HTTP ${response.status}`);
+                    }
+
+                    console.log('SSE stream opened (fetch-based)');
+                    this.sseRetryCount = 0;
                     this.isConnected = true;
+                    this.sseSource = true;
                     this.setStatus('Online', '#00d26a');
                     this.setInputEnabled(true);
-                };
 
-                this.sseSource.onmessage = (event) => {
-                    this.handleSSEEvent(event);
-                };
+                    // Process any pending quick prompt messages now that we're connected
+                    if (this.pendingMessages && this.pendingMessages.length > 0) {
+                        const msgs = [...this.pendingMessages];
+                        this.pendingMessages = [];
+                        for (const msg of msgs) {
+                            await this.sendMessageDirect(msg);
+                        }
+                    }
 
-                // Also listen for named SCRT2 events (belt-and-suspenders)
-                const namedEvents = [
-                    'CONVERSATION_MESSAGE',
-                    'CONVERSATION_TYPING_STARTED_INDICATOR',
-                    'CONVERSATION_TYPING_STOPPED_INDICATOR',
-                    'CONVERSATION_PARTICIPANT_CHANGED',
-                    'CONVERSATION_ROUTING_RESULT',
-                    'CONVERSATION_ROUTING_WORK_RESULT',
-                    'CONVERSATION_CLOSE_CONVERSATION',
-                    'CONVERSATION_DELIVERY_ACKNOWLEDGEMENT',
-                    'CONVERSATION_READ_ACKNOWLEDGEMENT',
-                    'SESSION_STATUS_CHANGED'
-                ];
-                namedEvents.forEach(name => {
-                    this.sseSource.addEventListener(name, (event) => {
-                        console.log('Named SSE event:', name);
-                        this.handleSSEEvent(event);
-                    });
-                });
+                    // Read the stream
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let buffer = '';
 
-                this.sseSource.onerror = (err) => {
-                    console.log('SSE error/closed');
-                    this.sseSource.close();
-                    this.sseSource = null;
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        buffer += decoder.decode(value, { stream: true });
+                        const lines = buffer.split('\n');
+                        buffer = lines.pop() || '';
+
+                        for (const line of lines) {
+                            const trimmed = line.trim();
+                            if (trimmed.startsWith('data:')) {
+                                const data = trimmed.substring(5).trim();
+                                if (data && data !== '0') {
+                                    this.handleSSEData(data);
+                                }
+                            }
+                        }
+                    }
+
+                    // Stream ended cleanly
+                    console.log('SSE stream ended');
                     this.isConnected = false;
+                    this.sseSource = null;
+
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        console.log('SSE aborted (intentional)');
+                        return;
+                    }
+
+                    console.error('SSE error:', err.message);
+                    this.isConnected = false;
+                    this.sseSource = null;
 
                     this.sseRetryCount++;
                     if (this.sseRetryCount > this.sseMaxRetries) {
-                        console.log('SSE max retries reached — giving up');
+                        console.log('SSE max retries reached');
                         this.setStatus('Disconnected', '#ff4444');
+                        this.addMessage('Connection lost. Please click "Reset" to reconnect.', 'agent');
                         this.setInputEnabled(false);
                         return;
                     }
 
-                    // Exponential backoff: 2s, 4s, 8s, 16s, 32s
-                    const delay = Math.min(2000 * Math.pow(2, this.sseRetryCount - 1), 32000);
+                    const delay = Math.min(1000 * Math.pow(1.5, this.sseRetryCount - 1), 10000);
                     console.log(`SSE retry ${this.sseRetryCount}/${this.sseMaxRetries} in ${delay}ms`);
                     this.setStatus('Reconnecting...', '#ffd700');
 
-                    setTimeout(() => {
-                        if (this.accessToken) this.startSSE();
-                    }, delay);
-                };
+                    await new Promise(r => setTimeout(r, delay));
+                    if (this.accessToken && !this.sseAbortController?.signal?.aborted) {
+                        return this.startSSE();
+                    }
+                }
             },
 
-            // ===== STEP 3: Handle SSE events =====
-            handleSSEEvent(event) {
+            // Handle raw SSE data string
+            handleSSEData(raw) {
                 try {
-                    // The SSE proxy might send raw data or JSON
-                    const raw = event.data;
-                    if (!raw || raw === ':ok' || raw.trim() === '') return;
-
                     let data;
                     try { data = JSON.parse(raw); } catch(e) {
-                        console.log('SSE non-JSON data:', raw.substring(0, 200));
+                        console.log('SSE non-JSON:', raw.substring(0, 100));
                         return;
                     }
 
-                    console.log('SSE parsed event:', JSON.stringify(data).substring(0, 300));
+                    if (typeof data !== 'object' || data === null) return;
 
-                    const eventType = data.conversationEntry?.entryType || data.type || event.type || '';
+                    const entry = data.conversationEntry;
+                    if (!entry) return;
 
-                    switch (eventType) {
+                    const entryType = entry.entryType || '';
+
+                    switch (entryType) {
                         case 'Message':
-                        case 'CONVERSATION_MESSAGE':
                             this.handleAgentMessage(data);
                             break;
-
                         case 'TypingStartedIndicator':
-                        case 'CONVERSATION_TYPING_STARTED_INDICATOR':
                             this.showTyping();
                             break;
-
                         case 'TypingStoppedIndicator':
-                        case 'CONVERSATION_TYPING_STOPPED_INDICATOR':
-                            // Don't remove typing yet — wait for the message
                             break;
-
                         case 'ParticipantChanged':
-                        case 'CONVERSATION_PARTICIPANT_CHANGED':
-                            console.log('Participant changed:', data);
+                            console.log('Participant changed');
                             break;
-
                         case 'RoutingResult':
-                        case 'CONVERSATION_ROUTING_RESULT':
-                            console.log('Routing result:', data);
+                        case 'RoutingWorkResult':
+                            console.log('Routing:', entryType);
                             break;
-
                         case 'CloseConversation':
-                        case 'CONVERSATION_CLOSE_CONVERSATION':
                             this.setStatus('Conversation ended', '#999');
                             break;
-
                         default:
-                            console.log('SSE event:', eventType, data);
+                            console.log('SSE event:', entryType);
                     }
                 } catch (err) {
-                    console.log('SSE parse error:', err);
+                    console.log('SSE parse error:', err.message);
                 }
             },
 
@@ -1749,60 +1730,43 @@
                 this.setInputEnabled(false);
                 this.setStatus('Connecting...', '#ffd700');
 
-                const gotToken = await this.getToken();
-                if (!gotToken) {
-                    this.isInitializing = false;
-                    this.setStatus('Connection failed', '#ff4444');
-                    this.addMessage('Unable to connect to the Nike Assistant. Please refresh the page to try again.', 'agent');
-                    return;
-                }
-
-                // Create conversation FIRST — SCRT2 requires an active conversation before SSE will connect
-                const created = await this.createConversation();
-                if (!created) {
-                    this.isInitializing = false;
-                    this.setStatus('Connection failed', '#ff4444');
-                    this.addMessage('Unable to start a conversation. Please refresh the page.', 'agent');
-                    return;
-                }
-
-                // Brief delay to let SCRT2 event router register the conversation
-                await new Promise(r => setTimeout(r, 1500));
-
-                // Now start SSE — conversation exists, event router should accept
-                this.startSSE();
-
-                // Wait for SSE to establish (up to 8s with retries)
-                let waited = 0;
-                while (!this.isConnected && waited < 8000) {
-                    await new Promise(r => setTimeout(r, 300));
-                    waited += 300;
-                }
-
-                this.isInitializing = false;
-
-                if (this.isConnected) {
-                    this.setStatus('Online', '#00d26a');
-                    this.setInputEnabled(true);
-                    // Send any queued messages from quick prompt clicks
-                    // These were already displayed in the UI by sendQuickPrompt, so send without re-displaying
-                    while (this.pendingMessages.length > 0) {
-                        const msg = this.pendingMessages.shift();
-                        await this.sendMessageDirect(msg);
+                try {
+                    // Step 1: Get access token
+                    const gotToken = await this.getToken();
+                    if (!gotToken) {
+                        this.setStatus('Connection failed', '#ff4444');
+                        this.addMessage('Unable to connect to the Nike Assistant. Please refresh the page to try again.', 'agent');
+                        return;
                     }
-                } else {
-                    // SSE may still be connecting — enable input anyway
-                    this.setInputEnabled(true);
-                    // If there are pending messages, keep trying
-                    if (this.pendingMessages.length > 0) {
-                        setTimeout(() => {
-                            if (this.isConnected && this.pendingMessages.length > 0) {
-                                const msgs = [...this.pendingMessages];
-                                this.pendingMessages = [];
-                                msgs.forEach(m => this.sendMessageDirect(m));
-                            }
-                        }, 3000);
+
+                    // Step 2: Create conversation FIRST — SCRT2 requires it before SSE will connect
+                    const created = await this.createConversation();
+                    if (!created) {
+                        this.setStatus('Connection failed', '#ff4444');
+                        this.addMessage('Unable to start a conversation. Please refresh the page.', 'agent');
+                        return;
                     }
+
+                    // Step 3: Brief delay to let SCRT2 event router register the conversation
+                    await new Promise(r => setTimeout(r, 1500));
+
+                    // Step 4: Start SSE stream (fire-and-forget — it runs as a long-lived stream)
+                    // startSSE() will set isConnected=true and process pendingMessages when connected
+                    this.startSSE();
+
+                    // Wait for SSE to establish (up to 10s)
+                    let waited = 0;
+                    while (!this.isConnected && waited < 10000) {
+                        await new Promise(r => setTimeout(r, 250));
+                        waited += 250;
+                    }
+
+                    if (!this.isConnected) {
+                        console.log('SSE not yet connected after 10s, enabling input anyway');
+                        this.setInputEnabled(true);
+                    }
+                } finally {
+                    this.isInitializing = false;
                 }
             },
 
@@ -1818,10 +1782,11 @@
                     } catch {}
                 }
 
-                if (this.sseSource) {
-                    this.sseSource.close();
-                    this.sseSource = null;
+                if (this.sseAbortController) {
+                    this.sseAbortController.abort();
+                    this.sseAbortController = null;
                 }
+                this.sseSource = null;
 
                 this.accessToken = null;
                 this.conversationId = null;
@@ -1858,25 +1823,25 @@
         });
 
         function sendQuickPrompt(text) {
-            // Scroll to chat
+            // Scroll to chat section
             document.getElementById('live-agent').scrollIntoView({ behavior: 'smooth' });
 
             if (AgentChat.isConnected && AgentChat.conversationId) {
-                // Already connected — send immediately
+                // Already connected — send immediately as a normal message
                 AgentChat.sendMessage(text);
             } else {
-                // Not connected yet — queue the message and auto-initialize
-                AgentChat.pendingMessages = [text]; // Replace any existing queued message
+                // Not connected — display message in chat, queue it, and auto-initialize
+                AgentChat.pendingMessages = [text];
                 AgentChat.addMessage(text, 'user');
                 AgentChat.showTyping();
                 AgentChat.setInputEnabled(false);
 
+                // Start initialization if not already running
                 if (!chatInitialized && !AgentChat.isInitializing) {
                     chatInitialized = true;
                     AgentChat.init();
-                } else if (AgentChat.isInitializing) {
-                    // Already initializing — message is queued, will be sent when ready
                 }
+                // If already initializing, the queued message will be sent by startSSE() when connected
             }
         }
 

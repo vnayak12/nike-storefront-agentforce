@@ -249,12 +249,22 @@ app.get('/api/agent/sse', (req, res) => {
         sseRes.on('data', (chunk) => {
             if (closed) return;
             buffer += chunk.toString();
-            const lines = buffer.split('\n');
-            buffer = lines.pop() || '';
 
-            for (const line of lines) {
-                if (line.startsWith('event:')) continue;
-                try { res.write(line + '\n'); } catch {}
+            // SSE events are delimited by double-newline. Process complete events.
+            const events = buffer.split('\n\n');
+            buffer = events.pop() || ''; // Keep incomplete event in buffer
+
+            for (const event of events) {
+                if (!event.trim()) continue;
+                const lines = event.split('\n');
+                for (const line of lines) {
+                    if (line.startsWith('event:')) continue; // Strip event type
+                    if (line.startsWith('id:')) continue;    // Strip event IDs
+                    if (line.trim()) {
+                        try { res.write(line + '\n'); } catch {}
+                    }
+                }
+                try { res.write('\n'); } catch {} // Event delimiter
             }
         });
         sseRes.on('end', () => cleanup(sseReq));
