@@ -1139,8 +1139,8 @@
                         <div class="chat-msg agent" style="opacity:1;transform:none;">👋 Hi! I'm your Nike Assistant, powered by Agentforce. Ask me anything about products, orders, returns, or take a style quiz!</div>
                     </div>
                     <div class="chat-demo-footer">
-                        <input class="chat-demo-input" type="text" placeholder="Type a message..." id="liveAgentInput" onkeypress="if(event.key==='Enter')sendLiveMessage()">
-                        <button class="chat-demo-send" onclick="sendLiveMessage()" id="liveSendBtn">
+                        <input class="chat-demo-input" type="text" placeholder="Type a message..." id="liveAgentInput">
+                        <button class="chat-demo-send" id="liveSendBtn">
                             <svg width="16" height="16" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
                         </button>
                     </div>
@@ -1501,14 +1501,14 @@
                 });
 
                 this.sseSource.onerror = (err) => {
-                    console.log('SSE error/closed — will reconnect if needed');
-                    if (this.isConnected) {
-                        this.setStatus('Reconnecting...', '#ffd700');
-                        // Try reconnecting after a short delay
-                        setTimeout(() => {
-                            if (!this.isConnected) this.startSSE();
-                        }, 3000);
-                    }
+                    console.log('SSE error/closed — reconnecting');
+                    this.sseSource.close();
+                    this.sseSource = null;
+                    this.setStatus('Reconnecting...', '#ffd700');
+                    // Reconnect after short delay
+                    setTimeout(() => {
+                        if (this.accessToken) this.startSSE();
+                    }, 2000);
                 };
             },
 
@@ -1752,6 +1752,14 @@
             input.value = '';
             AgentChat.sendMessage(text);
         }
+
+        // Attach event listeners (CSP-safe — no inline handlers)
+        document.getElementById('liveAgentInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendLiveMessage();
+        });
+        document.getElementById('liveSendBtn').addEventListener('click', function() {
+            sendLiveMessage();
+        });
 
         function sendQuickPrompt(text) {
             const input = document.getElementById('liveAgentInput');

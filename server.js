@@ -28,6 +28,9 @@ app.use(helmet({
                 "https://*.my.salesforce.com",
                 "https://*.my.salesforce-setup.com"
             ],
+            scriptSrcAttr: [
+                "'unsafe-inline'"
+            ],
             styleSrc: [
                 "'self'",
                 "'unsafe-inline'",
@@ -192,10 +195,27 @@ app.get('/api/agent/sse', (req, res) => {
     });
     res.write(':ok\n\n');
 
+    let closed = false;
+
+    // Heroku has a 55s idle timeout — send keepalive pings every 20s
+    const keepalive = setInterval(() => {
+        if (closed) return;
+        try { res.write(':ping\n\n'); } catch {}
+    }, 20000);
+
+    function cleanup(sseReq) {
+        if (closed) return;
+        closed = true;
+        clearInterval(keepalive);
+        if (sseReq) sseReq.destroy();
+        try { res.end(); } catch {}
+    }
+
     const options = {
         hostname: SCRT2_DOMAIN,
         path: '/eventrouter/v1/sse',
         method: 'GET',
+        timeout: 0,  // No timeout for SSE
         headers: {
             'Accept': 'text/event-stream',
             'Authorization': `Bearer ${accessToken}`,
@@ -205,7 +225,16 @@ app.get('/api/agent/sse', (req, res) => {
 
     let buffer = '';
     const sseReq = https.request(options, (sseRes) => {
+        // If upstream returns non-200, pass through and close
+        if (sseRes.statusCode !== 200) {
+            console.error('SSE upstream status:', sseRes.statusCode);
+            res.write(`data:{"error":"upstream_${sseRes.statusCode}"}\n\n`);
+            cleanup(sseReq);
+            return;
+        }
+
         sseRes.on('data', (chunk) => {
+            if (closed) return;
             // Buffer incoming data and process line by line
             buffer += chunk.toString();
             const lines = buffer.split('\n');
@@ -215,33 +244,31 @@ app.get('/api/agent/sse', (req, res) => {
             for (const line of lines) {
                 // Strip named event lines — this makes all events go through
                 // EventSource.onmessage so the browser can handle them uniformly
-                if (line.startsWith('event:')) {
-                    // Skip the event: line — data will arrive as unnamed event
-                    continue;
-                }
-                res.write(line + '\n');
+                if (line.startsWith('event:')) continue;
+                try { res.write(line + '\n'); } catch {}
             }
         });
-        sseRes.on('end', () => {
-            if (buffer) res.write(buffer);
-            res.end();
-        });
+        sseRes.on('end', () => cleanup(sseReq));
         sseRes.on('error', (err) => {
             console.error('SSE upstream error:', err.message);
-            res.end();
+            cleanup(sseReq);
         });
     });
 
     sseReq.on('error', (err) => {
         console.error('SSE request error:', err.message);
-        res.end();
+        cleanup(sseReq);
+    });
+
+    sseReq.on('timeout', () => {
+        // Should not happen with timeout:0 but handle gracefully
+        console.error('SSE request timeout');
+        cleanup(sseReq);
     });
 
     sseReq.end();
 
-    req.on('close', () => {
-        sseReq.destroy();
-    });
+    req.on('close', () => cleanup(sseReq));
 });
 
 // 5. Close conversation
