@@ -503,6 +503,295 @@
             font-size: 12px;
         }
 
+        /* Live Agent Experience */
+        .live-agent-section {
+            background: var(--nike-black);
+            padding: 80px 40px;
+            overflow: hidden;
+        }
+
+        .live-agent-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .live-agent-info {
+            color: var(--nike-white);
+        }
+
+        .live-agent-info .agent-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #fa5400;
+            margin-bottom: 24px;
+        }
+
+        .live-agent-info .agent-badge .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #00d26a;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .live-agent-info h2 {
+            font-size: 48px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1.5px;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .live-agent-info h2 span {
+            color: var(--nike-orange);
+        }
+
+        .live-agent-info p {
+            color: #999;
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 32px;
+            max-width: 420px;
+        }
+
+        .agent-capabilities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+
+        .capability-chip {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #ccc;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .capability-chip:hover {
+            background: rgba(250,84,0,0.15);
+            border-color: var(--nike-orange);
+            color: var(--nike-orange);
+        }
+
+        .capability-chip .chip-icon {
+            margin-right: 6px;
+        }
+
+        /* Chat Demo Window */
+        .chat-demo {
+            background: #1a1a1a;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            max-width: 420px;
+            margin-left: auto;
+        }
+
+        .chat-demo-header {
+            background: linear-gradient(135deg, #222 0%, #1a1a1a 100%);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .chat-demo-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--nike-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .chat-demo-name {
+            flex: 1;
+        }
+
+        .chat-demo-name h4 {
+            color: var(--nike-white);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chat-demo-name span {
+            color: #00d26a;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .chat-demo-body {
+            padding: 20px;
+            min-height: 380px;
+            max-height: 380px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            scrollbar-width: none;
+        }
+
+        .chat-demo-body::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chat-msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 13px;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: chatMsgIn 0.4s ease forwards;
+        }
+
+        @keyframes chatMsgIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-msg.user {
+            background: var(--nike-orange);
+            color: var(--nike-white);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-msg.agent {
+            background: #2a2a2a;
+            color: #e0e0e0;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-msg.agent strong {
+            color: var(--nike-white);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: #2a2a2a;
+            border-radius: 16px;
+            align-self: flex-start;
+            max-width: 60px;
+        }
+
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background: #666;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+
+        .chat-demo-footer {
+            padding: 12px 20px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-demo-input {
+            flex: 1;
+            background: #2a2a2a;
+            border: none;
+            border-radius: 100px;
+            padding: 10px 16px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .chat-demo-send {
+            width: 36px;
+            height: 36px;
+            background: var(--nike-orange);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .chat-demo-send:hover {
+            transform: scale(1.1);
+        }
+
+        .scenario-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .scenario-tab {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #999;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .scenario-tab:hover, .scenario-tab.active {
+            background: var(--nike-orange);
+            border-color: var(--nike-orange);
+            color: var(--nike-white);
+        }
+
+        @media (max-width: 768px) {
+            .live-agent-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .live-agent-info h2 { font-size: 36px; }
+            .chat-demo { max-width: 100%; margin: 0; }
+            .scenario-tabs { flex-wrap: wrap; }
+        }
+
         /* Chat trigger button */
         .chat-trigger-btn {
             position: fixed;
@@ -688,6 +977,65 @@
         <button class="btn-primary" onclick="openChat()" style="margin-top: 24px;">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align: middle; margin-right: 6px;"><path d="M16 17.25h2A2.25 2.25 0 0020.25 15V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v9A2.25 2.25 0 006 17.25h6a2.25 2.25 0 012.25 2.25V21m.75-8.25H7.5m9-4.5h-9"/></svg>Start a Conversation
         </button>
+    </section>
+
+    <!-- Live Agent Experience -->
+    <section class="live-agent-section" id="live-agent">
+        <div class="live-agent-container">
+            <div class="live-agent-info">
+                <div class="agent-badge">
+                    <span class="pulse-dot"></span>
+                    Agentforce Powered
+                </div>
+                <h2>See It<br><span>In Action</span></h2>
+                <p>Watch our Nike Assistant handle real customer scenarios — from finding the perfect shoe to tracking your order. Try it live on the chat or explore the demos below.</p>
+
+                <div class="agent-capabilities">
+                    <span class="capability-chip"><span class="chip-icon">🎯</span>Style Quiz</span>
+                    <span class="capability-chip"><span class="chip-icon">🛍️</span>Product Recs</span>
+                    <span class="capability-chip"><span class="chip-icon">📦</span>Order Tracking</span>
+                    <span class="capability-chip"><span class="chip-icon">🔄</span>Returns</span>
+                    <span class="capability-chip"><span class="chip-icon">💎</span>Member Perks</span>
+                    <span class="capability-chip"><span class="chip-icon">🌍</span>7 Languages</span>
+                    <span class="capability-chip"><span class="chip-icon">⬆️</span>Cross-Sell</span>
+                    <span class="capability-chip"><span class="chip-icon">📏</span>Size Guide</span>
+                </div>
+
+                <button class="btn-primary" onclick="openChat()" style="background: var(--nike-orange);">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align: middle; margin-right: 6px;"><path d="M16 17.25h2A2.25 2.25 0 0020.25 15V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v9A2.25 2.25 0 006 17.25h6a2.25 2.25 0 012.25 2.25V21m.75-8.25H7.5m9-4.5h-9"/></svg>Try It Live
+                </button>
+            </div>
+
+            <div>
+                <div class="scenario-tabs">
+                    <button class="scenario-tab active" onclick="playScenario('shopping')">🛍️ Shopping</button>
+                    <button class="scenario-tab" onclick="playScenario('order')">📦 Order</button>
+                    <button class="scenario-tab" onclick="playScenario('style')">🎯 Style Quiz</button>
+                    <button class="scenario-tab" onclick="playScenario('returns')">🔄 Returns</button>
+                </div>
+                <div class="chat-demo">
+                    <div class="chat-demo-header">
+                        <div class="chat-demo-avatar">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M21 8.719L7.836 14.303C6.74 14.768 5.818 15 5.075 15c-.836 0-1.445-.295-1.819-.884-.485-.76-.273-1.982.559-3.272.494-.754 1.122-1.446 1.734-2.108-.144.234-1.415 2.349-.025 3.345.275.2.666.298 1.147.298.386 0 .829-.063 1.316-.19L21 8.719z"/></svg>
+                        </div>
+                        <div class="chat-demo-name">
+                            <h4>Nike Assistant</h4>
+                            <span>● Online now</span>
+                        </div>
+                        <svg width="16" height="16" fill="none" stroke="#666" stroke-width="2"><circle cx="2" cy="8" r="1" fill="#666"/><circle cx="8" cy="8" r="1" fill="#666"/><circle cx="14" cy="8" r="1" fill="#666"/></svg>
+                    </div>
+                    <div class="chat-demo-body" id="chatDemoBody">
+                        <!-- Messages rendered by JS -->
+                    </div>
+                    <div class="chat-demo-footer">
+                        <input class="chat-demo-input" type="text" placeholder="Type a message..." readonly>
+                        <button class="chat-demo-send" onclick="openChat()">
+                            <svg width="16" height="16" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Membership -->
@@ -935,6 +1283,118 @@
                 if (cat) filterProducts(cat);
             });
         });
+
+        // ===== LIVE AGENT DEMO =====
+        const scenarios = {
+            shopping: [
+                { type: 'agent', text: "👋 Hey there! Welcome to Nike. I'm your personal shopping assistant. What are you looking for today?", delay: 500 },
+                { type: 'user', text: "I need running shoes for a marathon. Budget around $150.", delay: 2000 },
+                { type: 'agent', text: "Great choice! 🏃 For marathon training, I'd recommend:", delay: 2500 },
+                { type: 'agent', text: "1. <strong>Nike Pegasus 41</strong> — $139.99\n   Our #1 running shoe. Perfect for any distance.\n\n2. <strong>Nike Vomero 18</strong> — $159.99\n   Extra cushioning for long-run comfort.\n\n3. <strong>Nike Structure 26</strong> — $139.99\n   Stability support for overpronators.", delay: 1800 },
+                { type: 'user', text: "The Pegasus looks good! What size should I get?", delay: 3000 },
+                { type: 'agent', text: "Nike Pegasus runs true to size for most runners. Pro tip: if you're running long distances, go <strong>half a size up</strong> — your feet swell during marathons! 👟\n\nWant me to add the Pegasus 41 to your cart?", delay: 2000 }
+            ],
+            order: [
+                { type: 'agent', text: "👋 Hi! How can I help you today?", delay: 500 },
+                { type: 'user', text: "Where is my order #NKE-20260159?", delay: 1800 },
+                { type: 'agent', text: "Let me look that up for you... 📦", delay: 1500 },
+                { type: 'agent', text: "Found it! Here's your order status:\n\n📋 <strong>Order #NKE-20260159</strong>\n• Nike Air Max 90 (Size 10)\n• Status: <strong>In Transit</strong> 🚚\n• Carrier: FedEx\n• Est. Delivery: <strong>June 7, 2026</strong>\n\nYour package is currently in Memphis, TN.", delay: 2200 },
+                { type: 'user', text: "Can I change the delivery address?", delay: 2500 },
+                { type: 'agent', text: "Since the package is already in transit, I can request a FedEx redirect for you. There may be a small delay.\n\nWhat's the new delivery address? 📍", delay: 2000 }
+            ],
+            style: [
+                { type: 'agent', text: "👋 Welcome! Want me to run a quick style quiz to find your perfect Nike gear? 🎯", delay: 500 },
+                { type: 'user', text: "Yeah, let's do it!", delay: 1800 },
+                { type: 'agent', text: "Awesome! First question:\n\n🏃 What's your main activity?\n• Running\n• Basketball\n• Training\n• Casual / Lifestyle", delay: 1500 },
+                { type: 'user', text: "Casual / Lifestyle", delay: 2000 },
+                { type: 'agent', text: "Nice! What's your style vibe?\n• Classic — clean & timeless\n• Trendy — street style\n• Bold — statement pieces\n• Minimalist — less is more", delay: 1500 },
+                { type: 'user', text: "Trendy!", delay: 1800 },
+                { type: 'agent', text: "✨ <strong>Your Nike Style: The Trendsetter</strong>\n\n🎯 <strong>Your Top Picks:</strong>\n\n1. <strong>Nike Dunk Low Retro</strong> — $109.99\n   The hottest streetwear silhouette right now.\n\n2. <strong>Nike Air Max 90</strong> — $129.99\n   Iconic visible Air — always in style.\n\n3. <strong>Nike Air Max Plus</strong> — $174.99\n   Bold tuned air design that turns heads.", delay: 2500 }
+            ],
+            returns: [
+                { type: 'agent', text: "👋 Hi! How can I help you today?", delay: 500 },
+                { type: 'user', text: "I need to return some shoes I bought last week.", delay: 1800 },
+                { type: 'agent', text: "I'd be happy to help with that! Could you share your order number or the email address used for the purchase? 📧", delay: 1800 },
+                { type: 'user', text: "Order #NKE-20260143", delay: 1500 },
+                { type: 'agent', text: "Found it! ✅\n\n📋 <strong>Order #NKE-20260143</strong>\n• Air Jordan 1 Retro High OG (Size 11)\n• Purchased: May 29, 2026\n• Return window: <strong>30 days remaining</strong>\n\nGood news — you're within the return window! What's the reason for the return?", delay: 2200 },
+                { type: 'user', text: "They're a bit too tight. Need a size 11.5.", delay: 2200 },
+                { type: 'agent', text: "No problem! I can set up an exchange for <strong>Size 11.5</strong> right away. 🔄\n\nI'll email you a <strong>free return shipping label</strong>, and we'll ship the new size as soon as we receive your return.\n\nNike Members get <strong>free returns</strong> — I see you're a member! 💎", delay: 2000 }
+            ]
+        };
+
+        let currentScenario = null;
+        let scenarioTimeouts = [];
+
+        function playScenario(name) {
+            // Clear any running scenario
+            scenarioTimeouts.forEach(t => clearTimeout(t));
+            scenarioTimeouts = [];
+
+            // Update active tab
+            document.querySelectorAll('.scenario-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const body = document.getElementById('chatDemoBody');
+            body.innerHTML = '';
+            currentScenario = name;
+
+            const messages = scenarios[name];
+            let cumulativeDelay = 0;
+
+            messages.forEach((msg, index) => {
+                cumulativeDelay += msg.delay;
+
+                // Show typing indicator before agent messages
+                if (msg.type === 'agent') {
+                    const typingDelay = cumulativeDelay - 800;
+                    const tid1 = setTimeout(() => {
+                        if (currentScenario !== name) return;
+                        const typing = document.createElement('div');
+                        typing.className = 'typing-indicator';
+                        typing.id = 'typing-' + index;
+                        typing.innerHTML = '<span></span><span></span><span></span>';
+                        body.appendChild(typing);
+                        body.scrollTop = body.scrollHeight;
+                    }, Math.max(typingDelay, 0));
+                    scenarioTimeouts.push(tid1);
+                }
+
+                const tid2 = setTimeout(() => {
+                    if (currentScenario !== name) return;
+                    // Remove typing indicator
+                    const typingEl = document.getElementById('typing-' + index);
+                    if (typingEl) typingEl.remove();
+
+                    const msgEl = document.createElement('div');
+                    msgEl.className = 'chat-msg ' + msg.type;
+                    msgEl.innerHTML = msg.text.replace(/\n/g, '<br>');
+                    body.appendChild(msgEl);
+                    body.scrollTop = body.scrollHeight;
+                }, cumulativeDelay);
+                scenarioTimeouts.push(tid2);
+            });
+
+            // Auto-replay after completion
+            const replayDelay = cumulativeDelay + 6000;
+            const tid3 = setTimeout(() => {
+                if (currentScenario === name) playScenario(name);
+            }, replayDelay);
+            scenarioTimeouts.push(tid3);
+        }
+
+        // Auto-start the shopping scenario when visible
+        const liveAgentObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !currentScenario) {
+                    playScenario('shopping');
+                    // Set the first tab as active
+                    document.querySelector('.scenario-tab').classList.add('active');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const liveAgentSection = document.getElementById('live-agent');
+        if (liveAgentSection) liveAgentObserver.observe(liveAgentSection);
     </script>
 
 </body>
