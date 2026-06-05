@@ -1499,10 +1499,14 @@
                         }
                     }
 
-                    // Stream ended cleanly
-                    console.log('SSE stream ended');
+                    // Stream ended — reconnect if we have a valid session
+                    console.log('SSE stream ended, reconnecting...');
                     this.isConnected = false;
                     this.sseSource = null;
+                    if (this.accessToken && this.conversationId) {
+                        await new Promise(r => setTimeout(r, 2000));
+                        return this.startSSE();
+                    }
 
                 } catch (err) {
                     if (err.name === 'AbortError') {

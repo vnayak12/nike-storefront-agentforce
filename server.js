@@ -239,61 +239,111 @@ app.get('/api/agent/sse', (req, res) => {
     };
 
     let buffer = '';
-    const sseReq = https.request(options, (sseRes) => {
-        if (sseRes.statusCode !== 200) {
-            console.error('SSE upstream status:', sseRes.statusCode);
-            // Send error as SSE event so client can handle it
-            try { res.write(`data:{"error":"upstream_${sseRes.statusCode}"}\n\n`); } catch {}
-            cleanup(sseReq);
-            return;
-        }
+    let retryCount = 0;
+    const maxRetries = 5;
 
-        console.log('SSE upstream connected');
-        sseReq.setTimeout(0); // Disable timeout, we're streaming
+    function connectUpstream() {
+        if (closed) return;
+        buffer = '';
 
-        sseRes.on('data', (chunk) => {
-            if (closed) return;
-            buffer += chunk.toString();
+        const sseReq = https.request(options, (sseRes) => {
+            if (sseRes.statusCode !== 200) {
+                console.error('SSE upstream status:', sseRes.statusCode);
+                try { res.write(`data:{"error":"upstream_${sseRes.statusCode}"}\n\n`); } catch {}
+                // Retry upstream connection
+                retryCount++;
+                if (retryCount <= maxRetries && !closed) {
+                    const delay = Math.min(2000 * retryCount, 10000);
+                    console.log(`SSE upstream retry ${retryCount}/${maxRetries} in ${delay}ms`);
+                    setTimeout(connectUpstream, delay);
+                } else if (!closed) {
+                    try { res.write(`data:{"error":"max_retries"}\n\n`); } catch {}
+                    cleanup(null);
+                }
+                return;
+            }
 
-            // SSE events are delimited by double-newline
-            const events = buffer.split('\n\n');
-            buffer = events.pop() || '';
+            console.log('SSE upstream connected');
+            retryCount = 0;
+            sseReq.setTimeout(0);
 
-            for (const event of events) {
-                if (!event.trim()) continue;
-                const lines = event.split('\n');
-                for (const line of lines) {
-                    if (line.startsWith('event:')) continue;
-                    if (line.startsWith('id:')) continue;
-                    if (line.trim()) {
-                        try { res.write(line + '\n'); } catch {}
+            sseRes.on('data', (chunk) => {
+                if (closed) return;
+                buffer += chunk.toString();
+
+                const events = buffer.split('\n\n');
+                buffer = events.pop() || '';
+
+                for (const event of events) {
+                    if (!event.trim()) continue;
+                    const lines = event.split('\n');
+                    for (const line of lines) {
+                        if (line.startsWith('event:')) continue;
+                        if (line.startsWith('id:')) continue;
+                        if (line.trim()) {
+                            try { res.write(line + '\n'); } catch {}
+                        }
+                    }
+                    try { res.write('\n'); } catch {}
+                }
+            });
+            sseRes.on('end', () => {
+                console.log('SSE upstream ended');
+                if (!closed) {
+                    // Reconnect upstream
+                    retryCount++;
+                    if (retryCount <= maxRetries) {
+                        setTimeout(connectUpstream, 2000);
+                    } else {
+                        cleanup(null);
                     }
                 }
-                try { res.write('\n'); } catch {};
+            });
+            sseRes.on('error', (err) => {
+                console.error('SSE upstream error:', err.message);
+                if (!closed) {
+                    retryCount++;
+                    if (retryCount <= maxRetries) {
+                        setTimeout(connectUpstream, 2000);
+                    } else {
+                        cleanup(null);
+                    }
+                }
+            });
+        });
+
+        sseReq.on('error', (err) => {
+            console.error('SSE request error:', err.message);
+            if (!closed) {
+                retryCount++;
+                if (retryCount <= maxRetries) {
+                    setTimeout(connectUpstream, 2000);
+                } else {
+                    try { res.write(`data:{"error":"connection_failed"}\n\n`); } catch {}
+                    cleanup(null);
+                }
             }
         });
-        sseRes.on('end', () => cleanup(sseReq));
-        sseRes.on('error', (err) => {
-            console.error('SSE upstream error:', err.message);
-            cleanup(sseReq);
+
+        sseReq.on('timeout', () => {
+            console.error('SSE connect timeout');
+            sseReq.destroy();
+            if (!closed) {
+                retryCount++;
+                if (retryCount <= maxRetries) {
+                    setTimeout(connectUpstream, 2000);
+                } else {
+                    try { res.write(`data:{"error":"timeout"}\n\n`); } catch {}
+                    cleanup(null);
+                }
+            }
         });
-    });
 
-    sseReq.on('error', (err) => {
-        console.error('SSE request error:', err.message);
-        try { res.write(`data:{"error":"connection_failed"}\n\n`); } catch {}
-        cleanup(sseReq);
-    });
+        sseReq.end();
+        req.on('close', () => { closed = true; sseReq.destroy(); cleanup(null); });
+    }
 
-    sseReq.on('timeout', () => {
-        console.error('SSE connect timeout');
-        try { res.write(`data:{"error":"timeout"}\n\n`); } catch {}
-        cleanup(sseReq);
-    });
-
-    sseReq.end();
-
-    req.on('close', () => cleanup(sseReq));
+    connectUpstream();
     } catch (err) {
         console.error('SSE handler crash:', err.message, err.stack);
         try { res.status(500).json({ error: 'internal_error' }); } catch {}
