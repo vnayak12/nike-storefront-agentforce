@@ -1129,7 +1129,7 @@
                         </div>
                         <div class="chat-demo-name">
                             <h4>Nike Assistant</h4>
-                            <span id="agentStatus">● Connecting...</span>
+                            <span id="agentStatus"><span style="color:#999">●</span> Ready</span>
                         </div>
                         <button onclick="resetChat()" style="background:none;border:none;cursor:pointer;" title="New conversation">
                             <svg width="16" height="16" fill="none" stroke="#666" stroke-width="2"><path d="M1 4v6a2 2 0 002 2h10l4 4V4a2 2 0 00-2-2H3a2 2 0 00-2 2z"/></svg>
@@ -1451,7 +1451,11 @@
 
                     if (!response.ok) {
                         const errText = await response.text().catch(() => '');
-                        console.error('SSE response:', response.status, errText);
+                        console.error('SSE response:', response.status, errText.substring(0, 200));
+                        // 503 = SCRT2 event router not ready — use longer delay on retry
+                        if (response.status === 503) {
+                            throw new Error('SSE_503_NOT_READY');
+                        }
                         throw new Error(`SSE HTTP ${response.status}`);
                     }
 
@@ -1514,13 +1518,17 @@
                     if (this.sseRetryCount > this.sseMaxRetries) {
                         console.log('SSE max retries reached');
                         this.setStatus('Disconnected', '#ff4444');
-                        this.addMessage('Connection lost. Please click "Reset" to reconnect.', 'agent');
+                        this.addMessage('Connection lost. Please click "New conversation" to reconnect.', 'agent');
                         this.setInputEnabled(false);
                         return;
                     }
 
-                    const delay = Math.min(1000 * Math.pow(1.5, this.sseRetryCount - 1), 10000);
-                    console.log(`SSE retry ${this.sseRetryCount}/${this.sseMaxRetries} in ${delay}ms`);
+                    // 503 = event router not ready — wait longer before retry
+                    const is503 = err.message === 'SSE_503_NOT_READY';
+                    const delay = is503
+                        ? Math.min(3000 * this.sseRetryCount, 15000)
+                        : Math.min(1000 * Math.pow(1.5, this.sseRetryCount - 1), 10000);
+                    console.log(`SSE retry ${this.sseRetryCount}/${this.sseMaxRetries} in ${delay}ms (${is503 ? '503' : 'other'})`);
                     this.setStatus('Reconnecting...', '#ffd700');
 
                     await new Promise(r => setTimeout(r, delay));
@@ -1619,8 +1627,9 @@
                 }
             },
 
-            // ===== STEP 4: Create conversation =====
+            // ===== STEP 3: Create conversation =====
             async createConversation() {
+                if (this.conversationId) return true; // Already have a conversation
                 this.conversationId = this.uuid();
                 try {
                     const res = await fetch('/api/agent/conversation', {
@@ -1749,8 +1758,8 @@
                         return;
                     }
 
-                    // Step 3: Brief delay to let SCRT2 event router register the conversation
-                    await new Promise(r => setTimeout(r, 1500));
+                    // Step 3: Wait for SCRT2 event router to register the conversation
+                    await new Promise(r => setTimeout(r, 2000));
 
                     // Step 4: Start SSE stream (fire-and-forget — it runs as a long-lived stream)
                     // startSSE() will set isConnected=true and process pendingMessages when connected
@@ -1824,6 +1833,14 @@
             sendLiveMessage();
         });
 
+        function initChatOnce() {
+            if (chatInitialized) return;
+            chatInitialized = true;
+            // Disconnect observer so it can't fire again
+            chatObserver.disconnect();
+            AgentChat.init();
+        }
+
         function sendQuickPrompt(text) {
             // Scroll to chat section
             document.getElementById('live-agent').scrollIntoView({ behavior: 'smooth' });
@@ -1839,15 +1856,15 @@
                 AgentChat.setInputEnabled(false);
 
                 // Start initialization if not already running
-                if (!chatInitialized && !AgentChat.isInitializing) {
-                    chatInitialized = true;
-                    AgentChat.init();
+                if (!AgentChat.isInitializing) {
+                    initChatOnce();
                 }
                 // If already initializing, the queued message will be sent by startSSE() when connected
             }
         }
 
         function resetChat() {
+            chatInitialized = false;
             AgentChat.reset();
         }
 
@@ -1856,8 +1873,7 @@
         const chatObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !chatInitialized) {
-                    chatInitialized = true;
-                    AgentChat.init();
+                    initChatOnce();
                 }
             });
         }, { threshold: 0.2 });
@@ -1867,10 +1883,7 @@
 
         // Also allow chat trigger button to initialize
         document.getElementById('chatTrigger').addEventListener('click', () => {
-            if (!chatInitialized) {
-                chatInitialized = true;
-                AgentChat.init();
-            }
+            initChatOnce();
         });
     </script>
 
