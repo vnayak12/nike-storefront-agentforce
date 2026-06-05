@@ -1397,6 +1397,26 @@
                     this.handleSSEEvent(event);
                 };
 
+                // Also listen for named SCRT2 events (belt-and-suspenders)
+                const namedEvents = [
+                    'CONVERSATION_MESSAGE',
+                    'CONVERSATION_TYPING_STARTED_INDICATOR',
+                    'CONVERSATION_TYPING_STOPPED_INDICATOR',
+                    'CONVERSATION_PARTICIPANT_CHANGED',
+                    'CONVERSATION_ROUTING_RESULT',
+                    'CONVERSATION_ROUTING_WORK_RESULT',
+                    'CONVERSATION_CLOSE_CONVERSATION',
+                    'CONVERSATION_DELIVERY_ACKNOWLEDGEMENT',
+                    'CONVERSATION_READ_ACKNOWLEDGEMENT',
+                    'SESSION_STATUS_CHANGED'
+                ];
+                namedEvents.forEach(name => {
+                    this.sseSource.addEventListener(name, (event) => {
+                        console.log('Named SSE event:', name);
+                        this.handleSSEEvent(event);
+                    });
+                });
+
                 this.sseSource.onerror = (err) => {
                     console.log('SSE error/closed — will reconnect if needed');
                     if (this.isConnected) {
@@ -1417,9 +1437,14 @@
                     if (!raw || raw === ':ok' || raw.trim() === '') return;
 
                     let data;
-                    try { data = JSON.parse(raw); } catch { return; }
+                    try { data = JSON.parse(raw); } catch(e) {
+                        console.log('SSE non-JSON data:', raw.substring(0, 200));
+                        return;
+                    }
 
-                    const eventType = data.conversationEntry?.entryType || data.type || '';
+                    console.log('SSE parsed event:', JSON.stringify(data).substring(0, 300));
+
+                    const eventType = data.conversationEntry?.entryType || data.type || event.type || '';
 
                     switch (eventType) {
                         case 'Message':

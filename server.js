@@ -203,11 +203,27 @@ app.get('/api/agent/sse', (req, res) => {
         }
     };
 
+    let buffer = '';
     const sseReq = https.request(options, (sseRes) => {
         sseRes.on('data', (chunk) => {
-            res.write(chunk);
+            // Buffer incoming data and process line by line
+            buffer += chunk.toString();
+            const lines = buffer.split('\n');
+            // Keep the last (potentially incomplete) line in the buffer
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+                // Strip named event lines — this makes all events go through
+                // EventSource.onmessage so the browser can handle them uniformly
+                if (line.startsWith('event:')) {
+                    // Skip the event: line — data will arrive as unnamed event
+                    continue;
+                }
+                res.write(line + '\n');
+            }
         });
         sseRes.on('end', () => {
+            if (buffer) res.write(buffer);
             res.end();
         });
         sseRes.on('error', (err) => {
