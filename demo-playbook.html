@@ -15,6 +15,9 @@
       --color-nike-blue: #0076CE;
       --color-step-bg: #FAFAFA;
     }
+    .prompt-box { cursor: pointer; transition: all 0.15s; }
+    .prompt-box:hover { background: #FFF3ED; border-color: #FA5400; }
+    .prompt-box:active { transform: scale(0.98); }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -28,7 +31,13 @@
         <span class="text-sm font-medium tracking-widest uppercase opacity-70">Agentforce</span>
       </div>
       <h1 class="text-3xl font-extrabold tracking-tight">Nike CS Agent — Demo Playbook</h1>
-      <p class="text-white/70 mt-2 text-sm">Step-by-step guide to deliver an impressive Agentforce demo</p>
+      <p class="text-white/70 mt-2 text-sm">10–15 minute guided demo · Agentforce for Customer Service</p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <span class="bg-white/10 text-white/90 text-xs px-3 py-1 rounded-full">⏱ 10–15 min</span>
+        <span class="bg-white/10 text-white/90 text-xs px-3 py-1 rounded-full">7 Topics</span>
+        <span class="bg-white/10 text-white/90 text-xs px-3 py-1 rounded-full">Headless API</span>
+        <span class="bg-white/10 text-white/90 text-xs px-3 py-1 rounded-full">Einstein Trust Layer</span>
+      </div>
     </div>
   </header>
 
@@ -37,81 +46,165 @@
     <div class="max-w-4xl mx-auto flex flex-wrap gap-3 text-sm font-medium">
       <a href="#overview" class="text-nike hover:text-nike-accent transition">Overview</a>
       <span class="text-gray-300">·</span>
-      <a href="#demo1" class="text-nike hover:text-nike-accent transition">1. Live Agent Preview</a>
+      <a href="#why" class="text-nike hover:text-nike-accent transition">Why Agentforce</a>
       <span class="text-gray-300">·</span>
-      <a href="#demo2" class="text-nike hover:text-nike-accent transition">2. Agent Analytics</a>
+      <a href="#demo1" class="text-nike hover:text-nike-accent transition">1. Agent Builder</a>
       <span class="text-gray-300">·</span>
-      <a href="#demo3" class="text-nike hover:text-nike-accent transition">3. Agent Optimization</a>
+      <a href="#demo2" class="text-nike hover:text-nike-accent transition">2. Live Conversation</a>
       <span class="text-gray-300">·</span>
-      <a href="#demo4" class="text-nike hover:text-nike-accent transition">4. Einstein Trust Layer</a>
+      <a href="#demo3" class="text-nike hover:text-nike-accent transition">3. Trust &amp; Safety</a>
       <span class="text-gray-300">·</span>
-      <a href="#demo5" class="text-nike hover:text-nike-accent transition">5. Testing Center</a>
+      <a href="#demo4" class="text-nike hover:text-nike-accent transition">4. Analytics</a>
       <span class="text-gray-300">·</span>
-      <a href="#demo6" class="text-nike hover:text-nike-accent transition">6. Headless Storefront</a>
+      <a href="#demo5" class="text-nike hover:text-nike-accent transition">5. Testing</a>
       <span class="text-gray-300">·</span>
-      <a href="#tips" class="text-nike hover:text-nike-accent transition">Pro Tips</a>
+      <a href="#demo6" class="text-nike hover:text-nike-accent transition">6. Storefront</a>
+      <span class="text-gray-300">·</span>
+      <a href="#tips" class="text-nike hover:text-nike-accent transition">Tips &amp; Checklist</a>
     </div>
   </nav>
 
   <main class="max-w-4xl mx-auto px-6 py-10 space-y-16">
 
-    <!-- Overview -->
+    <!-- ======================= OVERVIEW ======================= -->
     <section id="overview">
       <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
         <span class="w-8 h-8 rounded-full bg-nike text-white flex items-center justify-center text-sm font-bold">📋</span>
         Demo Overview
       </h2>
-      <p class="text-nike-gray leading-relaxed mb-6">
-        This playbook covers six demo stations. Each can be shown independently or as a connected story.
-        The recommended flow is: start with a live agent conversation, then show the analytics &amp; monitoring dashboards
-        that capture what just happened, and finish with the storefront integration.
+      <p class="text-nike-gray leading-relaxed mb-4">
+        You're showing a <strong>Nike Customer Service agent built on Agentforce</strong> — an AI agent that handles order tracking,
+        returns, loyalty questions, product recommendations, and escalation, all grounded in real Salesforce data.
+        The demo follows a logical story: see how the agent is built → watch it in action → show how it's governed → prove it's measurable → verify quality → deploy anywhere.
       </p>
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-        <div class="bg-nike-light rounded-xl p-4 text-center">
-          <div class="text-2xl mb-1">🤖</div>
-          <div class="text-xs font-semibold">Live Agent Preview</div>
-          <div class="text-[10px] text-nike-gray mt-1">~5 min</div>
-        </div>
-        <div class="bg-nike-light rounded-xl p-4 text-center">
-          <div class="text-2xl mb-1">📊</div>
-          <div class="text-xs font-semibold">Agent Analytics</div>
-          <div class="text-[10px] text-nike-gray mt-1">~3 min</div>
-        </div>
-        <div class="bg-nike-light rounded-xl p-4 text-center">
-          <div class="text-2xl mb-1">🔍</div>
-          <div class="text-xs font-semibold">Agent Optimization</div>
-          <div class="text-[10px] text-nike-gray mt-1">~4 min</div>
-        </div>
-        <div class="bg-nike-light rounded-xl p-4 text-center">
-          <div class="text-2xl mb-1">🛡️</div>
-          <div class="text-xs font-semibold">Einstein Trust Layer</div>
-          <div class="text-[10px] text-nike-gray mt-1">~3 min</div>
-        </div>
-        <div class="bg-nike-light rounded-xl p-4 text-center">
-          <div class="text-2xl mb-1">🧪</div>
-          <div class="text-xs font-semibold">Testing Center</div>
-          <div class="text-[10px] text-nike-gray mt-1">~3 min</div>
-        </div>
-        <div class="bg-nike-light rounded-xl p-4 text-center">
-          <div class="text-2xl mb-1">🌐</div>
-          <div class="text-xs font-semibold">Headless Storefront</div>
-          <div class="text-[10px] text-nike-gray mt-1">~3 min</div>
+
+      <!-- Timed Flow -->
+      <div class="bg-nike rounded-xl p-5 text-white mb-6">
+        <h3 class="font-semibold text-sm mb-3">🎬 Recommended Flow (10–15 min)</h3>
+        <div class="space-y-2 text-sm text-white/80">
+          <div class="flex items-center gap-3">
+            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded w-12 text-center">0:00</span>
+            <span><strong>Opening Narrative</strong> — 30-second "why Agentforce" pitch (see below)</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded w-12 text-center">0:30</span>
+            <span><strong>Agent Builder</strong> — show how the agent is configured: topics, actions, variables</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded w-12 text-center">2:30</span>
+            <span><strong>Live Conversation</strong> — run 2–3 scenarios in Preview, show reasoning trace</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded w-12 text-center">6:00</span>
+            <span><strong>Trust &amp; Safety</strong> — Einstein Trust Layer: data masking, toxicity detection, audit</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded w-12 text-center">8:00</span>
+            <span><strong>Analytics &amp; Optimization</strong> — Agentforce Session Tracing, Agent Optimization</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded w-12 text-center">10:00</span>
+            <span><strong>Testing Center</strong> — automated QA with test suites</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded w-12 text-center">11:30</span>
+            <span><strong>Headless Storefront</strong> — same agent on Nike.com via API</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded w-12 text-center">13:00</span>
+            <span><strong>Wrap-Up</strong> — key differentiators, Q&amp;A</span>
+          </div>
         </div>
       </div>
 
-      <div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm">
-        <span class="font-semibold text-amber-800">⏱ Total Demo Time:</span>
-        <span class="text-amber-700"> ~20 minutes for the full flow, or pick individual stations for shorter demos.</span>
+      <div class="grid grid-cols-3 md:grid-cols-6 gap-2">
+        <div class="bg-nike-light rounded-xl p-3 text-center">
+          <div class="text-xl mb-1">🏗️</div>
+          <div class="text-[10px] font-semibold">Builder</div>
+        </div>
+        <div class="bg-nike-light rounded-xl p-3 text-center">
+          <div class="text-xl mb-1">💬</div>
+          <div class="text-[10px] font-semibold">Live Chat</div>
+        </div>
+        <div class="bg-nike-light rounded-xl p-3 text-center">
+          <div class="text-xl mb-1">🛡️</div>
+          <div class="text-[10px] font-semibold">Trust Layer</div>
+        </div>
+        <div class="bg-nike-light rounded-xl p-3 text-center">
+          <div class="text-xl mb-1">📊</div>
+          <div class="text-[10px] font-semibold">Analytics</div>
+        </div>
+        <div class="bg-nike-light rounded-xl p-3 text-center">
+          <div class="text-xl mb-1">🧪</div>
+          <div class="text-[10px] font-semibold">Testing</div>
+        </div>
+        <div class="bg-nike-light rounded-xl p-3 text-center">
+          <div class="text-xl mb-1">🌐</div>
+          <div class="text-[10px] font-semibold">Storefront</div>
+        </div>
       </div>
     </section>
 
-    <!-- DEMO 1: Live Agent Preview -->
+    <!-- ======================= WHY AGENTFORCE ======================= -->
+    <section id="why" class="border-t border-gray-100 pt-10">
+      <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+        <span class="w-8 h-8 rounded-full bg-nike text-white flex items-center justify-center text-sm font-bold">🏆</span>
+        Why Agentforce — Your Opening Narrative
+      </h2>
+      <p class="text-nike-gray text-sm mb-4">Use this 30-second pitch to frame the demo before you show anything:</p>
+
+      <div class="bg-gradient-to-r from-nike to-gray-800 rounded-xl p-6 text-white mb-6">
+        <p class="text-sm leading-relaxed italic">
+          "What if Nike could resolve 80% of customer service inquiries instantly — without adding headcount?
+          Agentforce is Salesforce's AI agent platform that goes beyond basic chatbots. It reasons over your
+          real Salesforce data — orders, loyalty tiers, cases — takes action, and learns from every interaction.
+          Unlike generic AI solutions, everything stays inside your trust boundary: PII is masked before it touches an LLM,
+          every decision is auditable, and your data is never used for model training. Let me show you what this looks like
+          for Nike Customer Service."
+        </p>
+      </div>
+
+      <h3 class="font-semibold text-sm mb-3 text-nike-accent">⚡ Key Differentiators (vs. Generic AI Chatbots)</h3>
+      <div class="grid md:grid-cols-2 gap-3 text-sm mb-4">
+        <div class="bg-step-bg rounded-lg p-4 border border-gray-100">
+          <div class="font-semibold mb-1">🧠 Grounded in Real Data</div>
+          <div class="text-xs text-nike-gray">Generic chatbots hallucinate. Agentforce queries live Salesforce data — real orders, real loyalty tiers, real case history. Every answer is verifiable.</div>
+        </div>
+        <div class="bg-step-bg rounded-lg p-4 border border-gray-100">
+          <div class="font-semibold mb-1">🔒 Enterprise-Grade Trust</div>
+          <div class="text-xs text-nike-gray">Einstein Trust Layer: PII masking, toxicity detection, prompt injection defense, zero data retention. No other AI platform provides this natively.</div>
+        </div>
+        <div class="bg-step-bg rounded-lg p-4 border border-gray-100">
+          <div class="font-semibold mb-1">⚙️ Actions, Not Just Answers</div>
+          <div class="text-xs text-nike-gray">Generic bots generate text. Agentforce triggers real actions — initiating returns in Service Cloud, updating loyalty in Data Cloud, creating cases. It DOES things.</div>
+        </div>
+        <div class="bg-step-bg rounded-lg p-4 border border-gray-100">
+          <div class="font-semibold mb-1">🔍 Full Transparency</div>
+          <div class="text-xs text-nike-gray">Every AI decision is traceable: topic selection, action invocation, data retrieval, response generation. No black box — you see exactly why the agent said what it said.</div>
+        </div>
+        <div class="bg-step-bg rounded-lg p-4 border border-gray-100">
+          <div class="font-semibold mb-1">📊 Built-In Analytics & QA</div>
+          <div class="text-xs text-nike-gray">Session tracing, agent optimization, and structured test suites ship natively. You measure quality and catch regressions before customers do.</div>
+        </div>
+        <div class="bg-step-bg rounded-lg p-4 border border-gray-100">
+          <div class="font-semibold mb-1">🌐 Deploy Anywhere</div>
+          <div class="text-xs text-nike-gray">Same agent works inside Salesforce, on your website, in your mobile app, via API. Build once, deploy to every channel — including headless for full UI control.</div>
+        </div>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm">
+        <span class="font-semibold text-amber-800">💡 Demo Tip:</span>
+        <span class="text-amber-700"> Weave these differentiators naturally throughout the demo — don't list them all at once. Each demo station naturally highlights one or two.</span>
+      </div>
+    </section>
+
+    <!-- ======================= DEMO 1: AGENT BUILDER ======================= -->
     <section id="demo1" class="border-t border-gray-100 pt-10">
       <div class="flex items-center gap-3 mb-6">
         <span class="w-10 h-10 rounded-xl bg-nike-accent text-white flex items-center justify-center text-lg font-bold">1</span>
         <div>
-          <h2 class="text-xl font-bold">Live Agent Preview</h2>
-          <p class="text-nike-gray text-sm">Show the agent handling real customer scenarios in Agentforce Builder</p>
+          <h2 class="text-xl font-bold">Agent Builder — How It's Built</h2>
+          <p class="text-nike-gray text-sm">Show the agent's architecture: topics, actions, and configuration</p>
         </div>
       </div>
 
@@ -119,10 +212,9 @@
         <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
           <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔗 Navigate to Agentforce Builder</h3>
           <ol class="space-y-2 text-sm text-nike-gray">
-            <li><span class="font-medium text-nike">Step 1:</span> Open your Salesforce org and go to <strong>Setup</strong></li>
-            <li><span class="font-medium text-nike">Step 2:</span> In Quick Find, search <strong>"Agentforce"</strong> or <strong>"Einstein Copilot"</strong></li>
-            <li><span class="font-medium text-nike">Step 3:</span> Click <strong>Agents</strong> → find <strong>Nike CS Agent v5</strong></li>
-            <li><span class="font-medium text-nike">Step 4:</span> Click <strong>"Open in Builder"</strong> to open the Agentforce Builder</li>
+            <li><span class="font-medium text-nike">Step 1:</span> Go to <strong>Setup</strong> → Quick Find → search <strong>"Agents"</strong></li>
+            <li><span class="font-medium text-nike">Step 2:</span> Click <strong>Agents</strong> → find <strong>"Nike Customer Service"</strong></li>
+            <li><span class="font-medium text-nike">Step 3:</span> Click <strong>"Open in Builder"</strong></li>
           </ol>
           <div class="mt-3 bg-blue-50 rounded-lg p-3 text-xs text-nike-blue">
             💡 <strong>Shortcut:</strong> You can also navigate directly via the Agentforce Builder URL if you've bookmarked it.
@@ -130,55 +222,279 @@
         </div>
 
         <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
-          <h3 class="font-semibold text-sm mb-3 text-nike-accent">💬 Run Demo Conversations</h3>
-          <p class="text-sm text-nike-gray mb-3">Click the <strong>"Preview"</strong> tab in the Builder. Use these scenarios:</p>
-
-          <div class="space-y-3">
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🗺️ What to Show on the Left Panel (Agent Definition)</h3>
+          <p class="text-sm text-nike-gray mb-3">Walk through the left sidebar — this is the agent's "brain":</p>
+          <div class="space-y-3 text-sm">
             <div class="bg-white rounded-lg p-3 border border-gray-100">
-              <div class="font-medium text-sm mb-1">🔎 Scenario A — Order Tracking</div>
-              <code class="text-xs bg-nike-light px-2 py-1 rounded block mt-1">"Where is my order? My email is jane.doe@nike-test.com"</code>
-              <div class="text-xs text-nike-gray mt-2"><strong>What to show:</strong> Agent looks up the customer, finds order, returns tracking info</div>
+              <div class="font-medium mb-1">📋 Topics (7 specialist areas)</div>
+              <div class="text-xs text-nike-gray">
+                <strong>Nike Customer Concierge</strong> (entry router) → <strong>Order Status &amp; Tracking</strong> →
+                <strong>Returns &amp; Refunds</strong> → <strong>Loyalty &amp; Membership</strong> →
+                <strong>Policy &amp; Product Info</strong> → <strong>Pre-Sales &amp; Discovery</strong> → <strong>Human Escalation</strong>
+              </div>
+              <div class="text-xs text-nike-accent mt-1">💬 <em>"Each topic is a specialist — like different departments in a contact center. The AI planner routes the customer to the right specialist."</em></div>
             </div>
-
             <div class="bg-white rounded-lg p-3 border border-gray-100">
-              <div class="font-medium text-sm mb-1">↩️ Scenario B — Return Request</div>
-              <code class="text-xs bg-nike-light px-2 py-1 rounded block mt-1">"I want to return my shoes. Order number 00000168"</code>
-              <div class="text-xs text-nike-gray mt-2"><strong>What to show:</strong> Agent checks return eligibility, processes the return</div>
+              <div class="font-medium mb-1">⚡ Actions (under each topic)</div>
+              <div class="text-xs text-nike-gray">Click into a topic to show its actions — these are Flows and Apex that the agent can invoke. The agent decides WHICH action to call based on the customer's intent.</div>
             </div>
-
             <div class="bg-white rounded-lg p-3 border border-gray-100">
-              <div class="font-medium text-sm mb-1">⭐ Scenario C — Loyalty Status</div>
-              <code class="text-xs bg-nike-light px-2 py-1 rounded block mt-1">"What's my Nike membership status? My email is jane.doe@nike-test.com"</code>
-              <div class="text-xs text-nike-gray mt-2"><strong>What to show:</strong> Agent retrieves Gold tier, points balance, membership benefits</div>
+              <div class="font-medium mb-1">📊 Variables (17 conversation variables)</div>
+              <div class="text-xs text-nike-gray">Show the Variables section: <code>customer_id</code>, <code>member_tier</code>, <code>order_status</code>, <code>points_balance</code>, etc. These are the agent's working memory — it fills them in as it identifies the customer.</div>
+              <div class="text-xs text-nike-accent mt-1">💬 <em>"The agent maintains state across the conversation — it remembers who you are, your tier, your order."</em></div>
             </div>
-
             <div class="bg-white rounded-lg p-3 border border-gray-100">
-              <div class="font-medium text-sm mb-1">🔥 Scenario D — Escalation</div>
-              <code class="text-xs bg-nike-light px-2 py-1 rounded block mt-1">"I've been waiting 3 weeks for my refund and I'm very frustrated"</code>
-              <div class="text-xs text-nike-gray mt-2"><strong>What to show:</strong> Agent recognizes frustration, escalates to human agent gracefully</div>
+              <div class="font-medium mb-1">🔌 Connections &amp; Channel Config</div>
+              <div class="text-xs text-nike-gray">Show the channel mappings: the agent is connected to <strong>Messaging for In-App &amp; Web</strong> (MIAW), which enables the Salesforce embedded widget, the headless API, and the Nike storefront integration. Context variables like <code>ContactId</code> and <code>RoutableId</code> map from the messaging session.</div>
             </div>
           </div>
         </div>
 
         <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
-          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🧠 Talking Points During Preview</h3>
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🧠 Talking Points</h3>
           <div class="text-sm text-nike-gray space-y-2">
-            <p>→ Point out the <strong>reasoning trace</strong> on the right panel — shows HOW the agent decided which topic/action to use</p>
-            <p>→ Highlight the <strong>guardrails</strong> — agent stays on-topic, won't answer unrelated questions</p>
-            <p>→ Show how the agent <strong>uses real Salesforce data</strong> (orders, loyalty, cases) — not canned responses</p>
-            <p>→ Mention the agent was built with <strong>declarative tools</strong> (Flows, Apex, Prompt Templates)</p>
+            <p>→ <strong>"This is declarative, not code-first"</strong> — topics and actions are configured, not coded from scratch</p>
+            <p>→ <strong>"The planner is multi-agent orchestration"</strong> — each topic is a specialist subagent, the planner routes dynamically</p>
+            <p>→ <strong>"Actions use existing investments"</strong> — Flows, Apex, Prompt Templates your team already built</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- DEMO 2: Agent Analytics -->
+    <!-- ======================= DEMO 2: LIVE CONVERSATION ======================= -->
     <section id="demo2" class="border-t border-gray-100 pt-10">
       <div class="flex items-center gap-3 mb-6">
         <span class="w-10 h-10 rounded-xl bg-nike-accent text-white flex items-center justify-center text-lg font-bold">2</span>
         <div>
-          <h2 class="text-xl font-bold">Agent Analytics</h2>
-          <p class="text-nike-gray text-sm">Tableau-powered dashboards showing agent performance at scale</p>
+          <h2 class="text-xl font-bold">Live Conversation — See It In Action</h2>
+          <p class="text-nike-gray text-sm">Run real scenarios and show the reasoning trace</p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔗 Open the Preview Panel</h3>
+          <ol class="space-y-2 text-sm text-nike-gray">
+            <li><span class="font-medium text-nike">Step 1:</span> In the Agentforce Builder, click the <strong>"Preview"</strong> tab (top-right area)</li>
+            <li><span class="font-medium text-nike">Step 2:</span> The chat panel opens on the right side</li>
+            <li><span class="font-medium text-nike">Step 3:</span> Type or paste one of the scenarios below</li>
+          </ol>
+          <div class="mt-3 bg-blue-50 rounded-lg p-3 text-xs text-nike-blue">
+            💡 <strong>Tip:</strong> The Preview panel also shows the <strong>reasoning trace</strong> — click on any step to expand the full AI decision chain. Point this out as you chat.
+          </div>
+        </div>
+
+        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">💬 Demo Prompts — Copy &amp; Paste These</h3>
+          <p class="text-sm text-nike-gray mb-3">Pick 2–3 for a 10-min demo. Each one demonstrates a different capability:</p>
+
+          <div class="space-y-3">
+            <div class="prompt-box bg-white rounded-lg p-3 border border-gray-200">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded">ORDER TRACKING</span>
+                <span class="text-xs text-nike-gray">~Shows data grounding</span>
+              </div>
+              <code class="text-xs bg-nike-light px-2 py-1.5 rounded block mt-1 select-all">Where is my order? My email is jane.doe@nike-test.com</code>
+              <div class="text-xs text-nike-gray mt-2">✅ Agent looks up customer → finds order → returns tracking info from Salesforce</div>
+            </div>
+
+            <div class="prompt-box bg-white rounded-lg p-3 border border-gray-200">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded">RETURN REQUEST</span>
+                <span class="text-xs text-nike-gray">~Shows action execution</span>
+              </div>
+              <code class="text-xs bg-nike-light px-2 py-1.5 rounded block mt-1 select-all">I want to return my shoes. Order number 00000168</code>
+              <div class="text-xs text-nike-gray mt-2">✅ Agent checks return eligibility → processes return → creates case in Service Cloud</div>
+            </div>
+
+            <div class="prompt-box bg-white rounded-lg p-3 border border-gray-200">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded">LOYALTY</span>
+                <span class="text-xs text-nike-gray">~Shows personalization</span>
+              </div>
+              <code class="text-xs bg-nike-light px-2 py-1.5 rounded block mt-1 select-all">What's my Nike membership status? My email is jane.doe@nike-test.com</code>
+              <div class="text-xs text-nike-gray mt-2">✅ Agent retrieves Gold tier, points balance, member benefits — personalizes response</div>
+            </div>
+
+            <div class="prompt-box bg-white rounded-lg p-3 border border-gray-200">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded">PRE-SALES</span>
+                <span class="text-xs text-nike-gray">~Shows revenue generation</span>
+              </div>
+              <code class="text-xs bg-nike-light px-2 py-1.5 rounded block mt-1 select-all">I'm training for a marathon. What running shoes do you recommend?</code>
+              <div class="text-xs text-nike-gray mt-2">✅ Agent recommends products, cross-sells accessories, surfaces member discounts</div>
+            </div>
+
+            <div class="prompt-box bg-white rounded-lg p-3 border border-gray-200">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded">ESCALATION</span>
+                <span class="text-xs text-nike-gray">~Shows graceful handoff</span>
+              </div>
+              <code class="text-xs bg-nike-light px-2 py-1.5 rounded block mt-1 select-all">I've been waiting 3 weeks for my refund and I'm extremely frustrated. This is unacceptable!</code>
+              <div class="text-xs text-nike-gray mt-2">✅ Agent recognizes frustration → creates case with summary → routes to human via Omni-Channel</div>
+            </div>
+
+            <div class="prompt-box bg-white rounded-lg p-3 border border-gray-200">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="bg-gray-100 text-gray-700 text-xs font-bold px-2 py-0.5 rounded">GUARDRAILS</span>
+                <span class="text-xs text-nike-gray">~Shows safety boundaries</span>
+              </div>
+              <code class="text-xs bg-nike-light px-2 py-1.5 rounded block mt-1 select-all">Can you help me write a poem about Adidas?</code>
+              <div class="text-xs text-nike-gray mt-2">✅ Agent politely declines off-topic requests — stays within its Nike CS scope</div>
+            </div>
+
+            <div class="prompt-box bg-white rounded-lg p-3 border border-gray-200">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="bg-teal-100 text-teal-700 text-xs font-bold px-2 py-0.5 rounded">MULTILINGUAL</span>
+                <span class="text-xs text-nike-gray">~Shows language support</span>
+              </div>
+              <code class="text-xs bg-nike-light px-2 py-1.5 rounded block mt-1 select-all">¿Cuál es la política de devoluciones de Nike?</code>
+              <div class="text-xs text-nike-gray mt-2">✅ Agent detects Spanish → responds in Spanish → applies same business logic</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔍 Reasoning Trace — Point This Out!</h3>
+          <p class="text-sm text-nike-gray mb-3">After each agent response, the right panel shows the full reasoning chain:</p>
+          <div class="space-y-2 text-sm">
+            <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-gray-100">
+              <span class="w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">1</span>
+              <div>
+                <div class="font-medium text-sm">Topic Classification</div>
+                <div class="text-xs text-nike-gray">Which specialist topic the planner selected and WHY</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-gray-100">
+              <span class="w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">2</span>
+              <div>
+                <div class="font-medium text-sm">Action Selection</div>
+                <div class="text-xs text-nike-gray">Which Flow/Apex action was chosen and the input parameters</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-gray-100">
+              <span class="w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">3</span>
+              <div>
+                <div class="font-medium text-sm">Data Retrieved</div>
+                <div class="text-xs text-nike-gray">The actual Salesforce records returned — order data, loyalty tier, etc.</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-gray-100">
+              <span class="w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">4</span>
+              <div>
+                <div class="font-medium text-sm">Response Generation</div>
+                <div class="text-xs text-nike-gray">How the LLM crafted the customer-facing response from the data</div>
+              </div>
+            </div>
+          </div>
+          <div class="text-xs text-nike-accent mt-3">💬 <em>"This is full transparency — you can see exactly why the agent said what it said. No black box."</em></div>
+        </div>
+
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm">
+          <span class="font-semibold text-blue-800">💡 Simulate Mode:</span>
+          <span class="text-blue-700"> In addition to the live Preview, the Builder also offers a <strong>Simulate</strong> mode that lets you test specific actions in isolation — useful for debugging or showing how individual components work. Toggle between Preview (full conversation) and Simulate (action-level testing) using the tabs in the Builder.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= DEMO 3: TRUST & SAFETY ======================= -->
+    <section id="demo3" class="border-t border-gray-100 pt-10">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-10 h-10 rounded-xl bg-nike-accent text-white flex items-center justify-center text-lg font-bold">3</span>
+        <div>
+          <h2 class="text-xl font-bold">Einstein Trust Layer — Governance &amp; Safety</h2>
+          <p class="text-nike-gray text-sm">Enterprise-grade AI safety built into every interaction</p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔗 Navigate to Trust Layer</h3>
+          <ol class="space-y-2 text-sm text-nike-gray">
+            <li><span class="font-medium text-nike">Step 1:</span> Go to <strong>Setup</strong> → Quick Find → <strong>"Einstein Trust Layer"</strong></li>
+            <li><span class="font-medium text-nike">Step 2:</span> Show the <strong>Data Masking</strong> tab — PII categories enabled</li>
+            <li><span class="font-medium text-nike">Step 3:</span> Click <strong>Safety &amp; Security</strong> tab — Toxicity Detection &amp; Prompt Injection</li>
+          </ol>
+          <div class="mt-3 bg-blue-50 rounded-lg p-3 text-xs text-nike-blue">
+            💡 <strong>Shortcut:</strong> Search "Einstein Trust Layer" in Setup Quick Find to navigate directly.
+          </div>
+        </div>
+
+        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🛡️ What's Enabled (Show Each)</h3>
+          <div class="space-y-3 text-sm">
+            <div class="bg-white rounded-lg p-3 border border-gray-100">
+              <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded bg-green-100 text-green-700 flex items-center justify-center text-xs">🔒</span>
+                  <span class="font-medium">Data Masking</span>
+                </div>
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded">ON</span>
+              </div>
+              <div class="text-xs text-nike-gray">Names, emails, phone numbers, credit cards, SSNs, passports, IBAN codes — all masked before hitting the LLM. Also: PII, GDPR, PCI, CCPA compliance categories are enabled.</div>
+            </div>
+            <div class="bg-white rounded-lg p-3 border border-gray-100">
+              <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded bg-green-100 text-green-700 flex items-center justify-center text-xs">🚫</span>
+                  <span class="font-medium">Toxicity Detection (Prompts)</span>
+                </div>
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded">ON</span>
+              </div>
+              <div class="text-xs text-nike-gray">Scans user inputs for harmful content. Scored and logged in the audit trail.</div>
+            </div>
+            <div class="bg-white rounded-lg p-3 border border-gray-100">
+              <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded bg-green-100 text-green-700 flex items-center justify-center text-xs">🚫</span>
+                  <span class="font-medium">Toxicity Detection (Responses)</span>
+                </div>
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded">ON</span>
+              </div>
+              <div class="text-xs text-nike-gray">Scans agent outputs before they reach the customer. Blocks toxic responses automatically.</div>
+            </div>
+            <div class="bg-white rounded-lg p-3 border border-gray-100">
+              <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded bg-green-100 text-green-700 flex items-center justify-center text-xs">⚡</span>
+                  <span class="font-medium">Prompt Injection Detection</span>
+                </div>
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded">ON</span>
+              </div>
+              <div class="text-xs text-nike-gray">Detects attempts to bypass system policies or hijack the AI's behavior. Critical for public-facing agents.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">📋 Where to See Audit Data</h3>
+          <ol class="space-y-2 text-sm text-nike-gray">
+            <li><span class="font-medium text-nike">Option A:</span> <strong>Setup → Einstein Audit, Analytics, and Monitoring Setup</strong> — shows that Audit &amp; Feedback is ON, with a "View Dashboard" link</li>
+            <li><span class="font-medium text-nike">Option B:</span> <strong>Lightning Dashboards → search "Einstein Generative AI Audit"</strong> — this is the auto-provisioned audit dashboard showing request volume, user counts, feedback, and token usage</li>
+            <li><span class="font-medium text-nike">Option C:</span> <strong>Lightning Reports → "Einstein Gen AI Audit & Feedback"</strong> folder — drill-down reports for detailed audit queries</li>
+          </ol>
+          <div class="text-xs text-nike-accent mt-2">💬 <em>"Every single LLM interaction is logged and auditable. CISOs love this."</em></div>
+        </div>
+
+        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🗣 Talking Points</h3>
+          <div class="text-sm text-nike-gray space-y-2">
+            <p>→ <strong>"Your data never leaves the Trust Boundary"</strong> — PII is masked before it goes to any LLM</p>
+            <p>→ <strong>"Zero data retention"</strong> — LLM providers can't retain or train on your data</p>
+            <p>→ <strong>"This is automatic"</strong> — no extra configuration needed, baked into every Agentforce interaction</p>
+            <p>→ <strong>"Full compliance trail"</strong> — audit every AI interaction for SOX, GDPR, CCPA, HIPAA</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= DEMO 4: ANALYTICS ======================= -->
+    <section id="demo4" class="border-t border-gray-100 pt-10">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-10 h-10 rounded-xl bg-nike-accent text-white flex items-center justify-center text-lg font-bold">4</span>
+        <div>
+          <h2 class="text-xl font-bold">Analytics &amp; Optimization</h2>
+          <p class="text-nike-gray text-sm">Session tracing, performance dashboards, and AI-powered optimization</p>
         </div>
       </div>
 
@@ -186,14 +502,14 @@
         <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
           <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔗 Navigate to Agent Analytics</h3>
           <ol class="space-y-2 text-sm text-nike-gray">
-            <li><span class="font-medium text-nike">Step 1:</span> From Setup, search <strong>"Agentforce"</strong> in Quick Find</li>
-            <li><span class="font-medium text-nike">Step 2:</span> Click <strong>Agents</strong> to open the agents list</li>
-            <li><span class="font-medium text-nike">Step 3:</span> Find the <strong>Nike CS Agent</strong> and click on it</li>
-            <li><span class="font-medium text-nike">Step 4:</span> Click <strong>"Open in Builder"</strong></li>
-            <li><span class="font-medium text-nike">Step 5:</span> In the Builder, look for the <strong>"Analytics"</strong> or <strong>"Performance"</strong> tab</li>
+            <li><span class="font-medium text-nike">Step 1:</span> Go to <strong>Setup → Einstein Audit, Analytics, and Monitoring Setup</strong></li>
+            <li><span class="font-medium text-nike">Step 2:</span> Show that <strong>Agentforce Session Tracing</strong> is ON — this captures every interaction</li>
+            <li><span class="font-medium text-nike">Step 3:</span> Show that <strong>Agent Optimization</strong> is ON — AI-powered improvement suggestions</li>
+            <li><span class="font-medium text-nike">Step 4:</span> Navigate to <strong>Agentforce Studio</strong> (App Launcher → "Agentforce Studio")</li>
+            <li><span class="font-medium text-nike">Step 5:</span> Click <strong>"Analytics"</strong> in the left nav to see performance dashboards</li>
           </ol>
           <div class="mt-3 bg-blue-50 rounded-lg p-3 text-xs text-nike-blue">
-            💡 <strong>Alternative Path:</strong> Go to the <strong>Agentforce Studio app</strong> (App Launcher → "Agentforce Studio") and check for Analytics dashboards there. If you see an "Oops! Wrong spot" message, click <strong>"Take Me There"</strong>.
+            💡 <strong>Note:</strong> Analytics data comes from Agentforce Session Tracing which stores data in Data Cloud. It may take a few minutes after conversations for data to appear in dashboards.
           </div>
         </div>
 
@@ -202,182 +518,53 @@
           <div class="grid grid-cols-2 gap-3 text-sm">
             <div class="bg-white rounded-lg p-3 border border-gray-100">
               <div class="text-nike-accent font-semibold text-xs uppercase tracking-wide">Deflection Rate</div>
-              <div class="text-nike-gray text-xs mt-1">% of conversations resolved by the agent without human escalation</div>
+              <div class="text-nike-gray text-xs mt-1">% of conversations resolved without human escalation</div>
             </div>
             <div class="bg-white rounded-lg p-3 border border-gray-100">
-              <div class="text-nike-accent font-semibold text-xs uppercase tracking-wide">Conversation Volume</div>
-              <div class="text-nike-gray text-xs mt-1">Total conversations handled — shows the 12+ test conversations we generated</div>
+              <div class="text-nike-accent font-semibold text-xs uppercase tracking-wide">Session Volume</div>
+              <div class="text-nike-gray text-xs mt-1">Total conversations handled by the agent</div>
             </div>
             <div class="bg-white rounded-lg p-3 border border-gray-100">
               <div class="text-nike-accent font-semibold text-xs uppercase tracking-wide">Topic Breakdown</div>
-              <div class="text-nike-gray text-xs mt-1">Which topics are most common (orders, returns, loyalty, escalations)</div>
+              <div class="text-nike-gray text-xs mt-1">Which topics are most common — orders, returns, loyalty</div>
             </div>
             <div class="bg-white rounded-lg p-3 border border-gray-100">
               <div class="text-nike-accent font-semibold text-xs uppercase tracking-wide">Resolution Time</div>
-              <div class="text-nike-gray text-xs mt-1">Average time to resolve — typically seconds vs minutes for human agents</div>
+              <div class="text-nike-gray text-xs mt-1">Seconds vs. minutes for human agents</div>
             </div>
           </div>
+        </div>
+
+        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔍 Agent Optimization (Deep Dive)</h3>
+          <div class="text-sm text-nike-gray space-y-2">
+            <p>In Agentforce Studio, <strong>Optimization</strong> uses AI to analyze your agent sessions and surface:</p>
+            <p>→ <strong>Sessions that need attention</strong> — where the agent struggled or gave incomplete answers</p>
+            <p>→ <strong>Improvement suggestions</strong> — AI-recommended changes to topics, instructions, or actions</p>
+            <p>→ <strong>Trend analysis</strong> — recurring issues that should become new topics or actions</p>
+          </div>
+          <div class="text-xs text-nike-accent mt-2">💬 <em>"This is how you continuously improve — the platform tells you what to fix."</em></div>
         </div>
 
         <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
           <h3 class="font-semibold text-sm mb-3 text-nike-accent">🗣 Talking Points</h3>
           <div class="text-sm text-nike-gray space-y-2">
-            <p>→ <strong>"This is powered by Data 360"</strong> — same analytics backbone used across Salesforce, powered by Tableau</p>
-            <p>→ <strong>"Every conversation generates analytics data"</strong> — no separate setup needed</p>
-            <p>→ <strong>"Managers can see trends over time"</strong> — identify what customers ask most, where the agent struggles</p>
-            <p>→ <strong>"This data helps optimize the agent"</strong> — natural transition to Agent Optimization demo</p>
+            <p>→ <strong>"Powered by Data Cloud"</strong> — same analytics backbone used across Salesforce</p>
+            <p>→ <strong>"Every conversation generates analytics automatically"</strong> — no separate setup</p>
+            <p>→ <strong>"Managers get visibility"</strong> — identify what customers ask most, where the agent struggles</p>
+            <p>→ <strong>"This feeds back into optimization"</strong> — continuous improvement loop</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- DEMO 3: Agent Optimization -->
-    <section id="demo3" class="border-t border-gray-100 pt-10">
-      <div class="flex items-center gap-3 mb-6">
-        <span class="w-10 h-10 rounded-xl bg-nike-accent text-white flex items-center justify-center text-lg font-bold">3</span>
-        <div>
-          <h2 class="text-xl font-bold">Agent Optimization</h2>
-          <p class="text-nike-gray text-sm">Deep trace view showing the AI reasoning chain behind every response</p>
-        </div>
-      </div>
-
-      <div class="space-y-4">
-        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
-          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔗 Access Agent Optimization</h3>
-          <ol class="space-y-2 text-sm text-nike-gray">
-            <li><span class="font-medium text-nike">Step 1:</span> From the <strong>Agentforce Builder</strong> (same page as Demo 1)</li>
-            <li><span class="font-medium text-nike">Step 2:</span> Click the <strong>"Preview"</strong> tab to run a conversation</li>
-            <li><span class="font-medium text-nike">Step 3:</span> After the agent responds, look at the <strong>right-hand panel</strong></li>
-            <li><span class="font-medium text-nike">Step 4:</span> This shows the <strong>Reasoning Trace</strong> — the full chain of AI decisions</li>
-          </ol>
-          <div class="mt-3 bg-blue-50 rounded-lg p-3 text-xs text-nike-blue">
-            💡 <strong>Best approach:</strong> Run one of the demo scenarios from Demo 1, then walk through the trace step by step.
-          </div>
-        </div>
-
-        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
-          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔍 What the Trace Shows</h3>
-          <div class="space-y-3 text-sm">
-            <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-gray-100">
-              <span class="w-7 h-7 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">1</span>
-              <div>
-                <div class="font-medium text-sm">Topic Classification</div>
-                <div class="text-xs text-nike-gray">Shows which topic the planner selected (e.g., "Order Tracking") and WHY</div>
-              </div>
-            </div>
-            <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-gray-100">
-              <span class="w-7 h-7 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">2</span>
-              <div>
-                <div class="font-medium text-sm">Action Selection</div>
-                <div class="text-xs text-nike-gray">Which Flow/Apex action was chosen (e.g., "Lookup Order") and the input parameters</div>
-              </div>
-            </div>
-            <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-gray-100">
-              <span class="w-7 h-7 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">3</span>
-              <div>
-                <div class="font-medium text-sm">Data Retrieval</div>
-                <div class="text-xs text-nike-gray">The actual Salesforce data returned — order records, loyalty tiers, case details</div>
-              </div>
-            </div>
-            <div class="flex items-start gap-3 bg-white rounded-lg p-3 border border-gray-100">
-              <span class="w-7 h-7 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">4</span>
-              <div>
-                <div class="font-medium text-sm">Response Generation</div>
-                <div class="text-xs text-nike-gray">How the LLM crafted the final customer-facing response using the retrieved data</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
-          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🗣 Talking Points</h3>
-          <div class="text-sm text-nike-gray space-y-2">
-            <p>→ <strong>"Full transparency into AI decisions"</strong> — you can see exactly why the agent said what it said</p>
-            <p>→ <strong>"This is how you debug and improve"</strong> — if the agent picks the wrong action, you see it here</p>
-            <p>→ <strong>"Every LLM call is logged"</strong> — transitions naturally to Einstein Trust Layer</p>
-            <p>→ <strong>"No black box"</strong> — unlike generic chatbots, every step is auditable</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- DEMO 4: Einstein Trust Layer -->
-    <section id="demo4" class="border-t border-gray-100 pt-10">
-      <div class="flex items-center gap-3 mb-6">
-        <span class="w-10 h-10 rounded-xl bg-nike-accent text-white flex items-center justify-center text-lg font-bold">4</span>
-        <div>
-          <h2 class="text-xl font-bold">Einstein Trust Layer</h2>
-          <p class="text-nike-gray text-sm">Enterprise-grade AI safety: data masking, toxicity detection, and audit trails</p>
-        </div>
-      </div>
-
-      <div class="space-y-4">
-        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
-          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔗 Navigate to Einstein Trust Layer</h3>
-          <ol class="space-y-2 text-sm text-nike-gray">
-            <li><span class="font-medium text-nike">Step 1:</span> Go to <strong>Setup</strong></li>
-            <li><span class="font-medium text-nike">Step 2:</span> In Quick Find, search <strong>"Einstein"</strong></li>
-            <li><span class="font-medium text-nike">Step 3:</span> Click <strong>"Einstein Setup"</strong> (or look for <strong>"Einstein Trust Layer"</strong>)</li>
-            <li><span class="font-medium text-nike">Step 4:</span> Navigate to the <strong>Trust Layer</strong> or <strong>Audit Trail</strong> section</li>
-          </ol>
-          <div class="mt-3 bg-blue-50 rounded-lg p-3 text-xs text-nike-blue">
-            💡 <strong>Alternative:</strong> Search for <strong>"Einstein"</strong> in Setup Quick Find — look for Trust Layer, Einstein Usage, or AI Audit Trail entries.
-          </div>
-        </div>
-
-        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
-          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🛡️ Key Trust Features to Demo</h3>
-          <div class="space-y-3 text-sm">
-            <div class="bg-white rounded-lg p-3 border border-gray-100">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="w-5 h-5 rounded bg-green-100 text-green-700 flex items-center justify-center text-xs">🔒</span>
-                <span class="font-medium">Data Masking</span>
-              </div>
-              <div class="text-xs text-nike-gray">PII (emails, phone numbers, SSNs) is automatically masked before being sent to the LLM. Show the audit log to prove sensitive data never leaves Salesforce.</div>
-            </div>
-            <div class="bg-white rounded-lg p-3 border border-gray-100">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="w-5 h-5 rounded bg-red-100 text-red-700 flex items-center justify-center text-xs">🚫</span>
-                <span class="font-medium">Toxicity Detection</span>
-              </div>
-              <div class="text-xs text-nike-gray">Both inputs and outputs are scanned for harmful content. The Trust Layer blocks toxic responses before they reach the customer.</div>
-            </div>
-            <div class="bg-white rounded-lg p-3 border border-gray-100">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="w-5 h-5 rounded bg-blue-100 text-blue-700 flex items-center justify-center text-xs">📋</span>
-                <span class="font-medium">Audit Trail</span>
-              </div>
-              <div class="text-xs text-nike-gray">Every LLM interaction is logged — who triggered it, what was sent, what was returned. Full compliance and governance trail.</div>
-            </div>
-            <div class="bg-white rounded-lg p-3 border border-gray-100">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="w-5 h-5 rounded bg-amber-100 text-amber-700 flex items-center justify-center text-xs">⚡</span>
-                <span class="font-medium">Zero Data Retention</span>
-              </div>
-              <div class="text-xs text-nike-gray">LLM providers don't retain or train on your data. The Trust Layer enforces this contractually and technically.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
-          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🗣 Talking Points</h3>
-          <div class="text-sm text-nike-gray space-y-2">
-            <p>→ <strong>"This is THE differentiator"</strong> — no other AI platform has this level of built-in trust</p>
-            <p>→ <strong>"Your data never leaves the Trust Boundary"</strong> — PII is masked before it goes to any LLM</p>
-            <p>→ <strong>"Every AI interaction is auditable"</strong> — CIO/CISO-friendly for compliance</p>
-            <p>→ <strong>"Works automatically"</strong> — no extra configuration, it's baked into every Agentforce interaction</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- DEMO 5: Testing Center -->
+    <!-- ======================= DEMO 5: TESTING ======================= -->
     <section id="demo5" class="border-t border-gray-100 pt-10">
       <div class="flex items-center gap-3 mb-6">
         <span class="w-10 h-10 rounded-xl bg-nike-accent text-white flex items-center justify-center text-lg font-bold">5</span>
         <div>
-          <h2 class="text-xl font-bold">Testing Center</h2>
-          <p class="text-nike-gray text-sm">Structured test cases to validate agent behavior before going live</p>
+          <h2 class="text-xl font-bold">Testing Center — Quality Assurance</h2>
+          <p class="text-nike-gray text-sm">Automated test suites to validate agent behavior before going live</p>
         </div>
       </div>
 
@@ -385,20 +572,40 @@
         <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
           <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔗 Navigate to Testing Center</h3>
           <ol class="space-y-2 text-sm text-nike-gray">
-            <li><span class="font-medium text-nike">Step 1:</span> Open the <strong>Agentforce Studio</strong> app (App Launcher → search "Agentforce Studio")</li>
-            <li><span class="font-medium text-nike">Step 2:</span> If you see an "Oops!" message, click <strong>"Take Me There"</strong></li>
-            <li><span class="font-medium text-nike">Step 3:</span> In the left navigation, look for <strong>"Tests"</strong> or <strong>"Testing"</strong> tab</li>
-            <li><span class="font-medium text-nike">Step 4:</span> You'll see test suites you can run against the agent</li>
+            <li><span class="font-medium text-nike">Step 1:</span> Go to <strong>Agentforce Studio</strong> (App Launcher → "Agentforce Studio")</li>
+            <li><span class="font-medium text-nike">Step 2:</span> Click <strong>"Tests"</strong> in the left navigation</li>
+            <li><span class="font-medium text-nike">Step 3:</span> You'll see test suites covering Nike CS scenarios</li>
+            <li><span class="font-medium text-nike">Step 4:</span> Click <strong>"Run"</strong> to execute the test suite — it runs asynchronously</li>
           </ol>
         </div>
 
         <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
-          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🧪 What Testing Center Shows</h3>
-          <div class="text-sm text-nike-gray space-y-2">
-            <p><strong>Test Cases:</strong> Predefined customer messages with expected outcomes (topic, action, response quality)</p>
-            <p><strong>Pass/Fail Results:</strong> Visual indicators showing which scenarios the agent handles correctly</p>
-            <p><strong>Regression Testing:</strong> Run the same tests after making changes to ensure nothing breaks</p>
-            <p><strong>Coverage:</strong> Shows which topics and actions are covered by test cases</p>
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🧪 Test Scenarios Configured</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex items-center gap-2 bg-white rounded-lg p-2 border border-gray-100">
+              <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded">TC-01</span>
+              <span class="text-xs text-nike-gray">"Where is my order?" → expects Order Status topic</span>
+            </div>
+            <div class="flex items-center gap-2 bg-white rounded-lg p-2 border border-gray-100">
+              <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded">TC-02</span>
+              <span class="text-xs text-nike-gray">"I want to return my shoes" → expects Returns topic</span>
+            </div>
+            <div class="flex items-center gap-2 bg-white rounded-lg p-2 border border-gray-100">
+              <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2 py-0.5 rounded">TC-03</span>
+              <span class="text-xs text-nike-gray">"What's my membership tier?" → expects Loyalty topic</span>
+            </div>
+            <div class="flex items-center gap-2 bg-white rounded-lg p-2 border border-gray-100">
+              <span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded">TC-04</span>
+              <span class="text-xs text-nike-gray">"Recommend running shoes" → expects Pre-Sales topic</span>
+            </div>
+            <div class="flex items-center gap-2 bg-white rounded-lg p-2 border border-gray-100">
+              <span class="bg-gray-100 text-gray-700 text-xs font-bold px-2 py-0.5 rounded">TC-05</span>
+              <span class="text-xs text-nike-gray">"What's your return policy?" → expects Policy topic</span>
+            </div>
+            <div class="flex items-center gap-2 bg-white rounded-lg p-2 border border-gray-100">
+              <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-0.5 rounded">TC-06</span>
+              <span class="text-xs text-nike-gray">"I'm furious about my refund" → expects Escalation topic</span>
+            </div>
           </div>
         </div>
 
@@ -406,72 +613,73 @@
           <h3 class="font-semibold text-sm mb-3 text-nike-accent">🗣 Talking Points</h3>
           <div class="text-sm text-nike-gray space-y-2">
             <p>→ <strong>"Just like unit tests for code"</strong> — structured validation for AI agents</p>
-            <p>→ <strong>"Run before every deployment"</strong> — catch issues before customers do</p>
-            <p>→ <strong>"CI/CD for AI"</strong> — testing is part of the deployment pipeline</p>
-            <p>→ <strong>"You define what 'correct' looks like"</strong> — not just vibes, measurable quality</p>
+            <p>→ <strong>"Run before every deployment"</strong> — catch regressions before customers do</p>
+            <p>→ <strong>"CI/CD for AI"</strong> — testing integrates into your deployment pipeline via CLI</p>
+            <p>→ <strong>"You define what 'correct' looks like"</strong> — measurable quality, not just vibes</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- DEMO 6: Headless Storefront -->
+    <!-- ======================= DEMO 6: HEADLESS STOREFRONT ======================= -->
     <section id="demo6" class="border-t border-gray-100 pt-10">
       <div class="flex items-center gap-3 mb-6">
         <span class="w-10 h-10 rounded-xl bg-nike-accent text-white flex items-center justify-center text-lg font-bold">6</span>
         <div>
-          <h2 class="text-xl font-bold">Headless Storefront (Bonus)</h2>
+          <h2 class="text-xl font-bold">Headless Storefront — Deploy Anywhere</h2>
           <p class="text-nike-gray text-sm">Nike.com-style storefront with embedded Agentforce via headless API</p>
         </div>
       </div>
 
       <div class="space-y-4">
         <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
-          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔗 Access the Storefront</h3>
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🔗 Open the Storefront</h3>
           <ol class="space-y-2 text-sm text-nike-gray">
-            <li><span class="font-medium text-nike">Step 1:</span> Open <strong>https://nike-storefront-e6fde5597e07.herokuapp.com</strong></li>
-            <li><span class="font-medium text-nike">Step 2:</span> Browse the Nike storefront — it's a full product catalog experience</li>
-            <li><span class="font-medium text-nike">Step 3:</span> Click the <strong>chat icon</strong> to open the Nike Assistant</li>
-            <li><span class="font-medium text-nike">Step 4:</span> Try asking about orders, returns, or products</li>
+            <li><span class="font-medium text-nike">Step 1:</span> Open <a href="https://nike-storefront-e6fde5597e07.herokuapp.com" target="_blank" class="text-nike-blue underline">https://nike-storefront-e6fde5597e07.herokuapp.com</a></li>
+            <li><span class="font-medium text-nike">Step 2:</span> Browse the Nike storefront — full product catalog experience</li>
+            <li><span class="font-medium text-nike">Step 3:</span> Click the <strong>chat icon</strong> (bottom-right) to open the Nike Assistant</li>
+            <li><span class="font-medium text-nike">Step 4:</span> Try the same prompts from Demo 2 — same agent, different UI</li>
           </ol>
         </div>
 
         <div class="bg-step-bg rounded-xl p-5 border border-gray-100">
-          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🏗 Architecture Talking Points</h3>
+          <h3 class="font-semibold text-sm mb-3 text-nike-accent">🏗 Architecture — What to Explain</h3>
           <div class="text-sm text-nike-gray space-y-2">
-            <p>→ <strong>"This uses the Messaging for In-App & Web headless API"</strong> — same Agentforce agent, completely custom UI</p>
-            <p>→ <strong>"The agent is channel-agnostic"</strong> — works in Salesforce, on your website, in your app, via API</p>
-            <p>→ <strong>"Server-side proxy handles authentication"</strong> — secure, no Salesforce credentials exposed to the browser</p>
-            <p>→ <strong>"Real-time streaming via SSE"</strong> — responses appear as the agent generates them</p>
+            <p>→ <strong>"Same agent, completely custom UI"</strong> — uses Messaging for In-App &amp; Web headless API (SCRT2)</p>
+            <p>→ <strong>"Build once, deploy everywhere"</strong> — Nike.com, Nike App, partner sites, kiosks — all from one agent</p>
+            <p>→ <strong>"Secure architecture"</strong> — server-side proxy handles auth, no Salesforce credentials in the browser</p>
+            <p>→ <strong>"Real-time streaming"</strong> — responses appear as the agent generates them via SSE</p>
           </div>
         </div>
 
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm">
-          <span class="font-semibold text-amber-800">⚠️ Note:</span>
-          <span class="text-amber-700"> If the storefront chat isn't responding, use the <strong>Agentforce Builder Preview</strong> (Demo 1) as your primary demo instead. It shows the same agent with full trace visibility.</span>
+          <span class="font-semibold text-amber-800">⚠️ Backup:</span>
+          <span class="text-amber-700"> If the storefront chat has any connectivity issues, use the <strong>Agentforce Builder Preview</strong> (Demo 2) as your primary demo surface — it shows the same agent with full trace visibility.</span>
         </div>
       </div>
     </section>
 
-    <!-- Pro Tips -->
+    <!-- ======================= PRO TIPS ======================= -->
     <section id="tips" class="border-t border-gray-100 pt-10">
       <div class="flex items-center gap-3 mb-6">
         <span class="w-10 h-10 rounded-xl bg-nike text-white flex items-center justify-center text-lg font-bold">★</span>
         <div>
-          <h2 class="text-xl font-bold">Pro Tips for a Great Demo</h2>
+          <h2 class="text-xl font-bold">Pro Tips &amp; Pre-Demo Checklist</h2>
           <p class="text-nike-gray text-sm">Make your demo unforgettable</p>
         </div>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-4">
+      <div class="grid md:grid-cols-2 gap-4 mb-6">
         <div class="bg-green-50 border border-green-200 rounded-xl p-4">
           <h3 class="font-semibold text-sm text-green-800 mb-2">✅ Do</h3>
           <div class="text-xs text-green-700 space-y-1.5">
-            <p>→ Pre-load all tabs/pages before the demo starts</p>
-            <p>→ Start with a live conversation — it's the "wow" moment</p>
-            <p>→ Tell a story: "A customer asks about their order → agent resolves it → let's see the analytics"</p>
-            <p>→ Emphasize the Trust Layer for enterprise audiences</p>
-            <p>→ Show the trace/optimization for technical audiences</p>
-            <p>→ Have the Heroku storefront open as your "closer"</p>
+            <p>→ Pre-load ALL tabs before the demo starts</p>
+            <p>→ Start with the "why" narrative — set context before showing anything</p>
+            <p>→ Tell a story: customer asks → agent resolves → analytics captured</p>
+            <p>→ Emphasize Trust Layer for executive audiences</p>
+            <p>→ Show reasoning trace for technical audiences</p>
+            <p>→ Close with the storefront — "same agent, any channel"</p>
+            <p>→ Weave in differentiators throughout, don't dump them all at once</p>
           </div>
         </div>
 
@@ -479,60 +687,40 @@
           <h3 class="font-semibold text-sm text-red-800 mb-2">❌ Don't</h3>
           <div class="text-xs text-red-700 space-y-1.5">
             <p>→ Don't navigate to pages live during the demo (pre-load them)</p>
-            <p>→ Don't test scenarios you haven't tried before</p>
-            <p>→ Don't deep-dive into config unless audience asks</p>
+            <p>→ Don't test scenarios you haven't practiced before</p>
+            <p>→ Don't deep-dive into config unless the audience asks</p>
             <p>→ Don't apologize for "demo data" — frame it as "representative scenarios"</p>
-            <p>→ Don't rush through the agent conversation — let people read the responses</p>
-            <p>→ Don't skip the Trust Layer for C-suite audiences</p>
+            <p>→ Don't rush through the conversation — let people read the responses</p>
+            <p>→ Don't name competitors directly — use differentiators framing instead</p>
           </div>
         </div>
       </div>
 
-      <div class="mt-6 bg-nike-light rounded-xl p-5">
+      <div class="bg-nike-light rounded-xl p-5 mb-6">
         <h3 class="font-semibold text-sm mb-3">📋 Pre-Demo Checklist</h3>
         <div class="grid md:grid-cols-2 gap-2 text-sm text-nike-gray">
           <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Agent is Active (check Builder status)</label>
-          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Agentforce Builder Preview tab loaded</label>
-          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Agent Analytics page loaded in separate tab</label>
-          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Einstein Trust Layer page loaded</label>
-          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Testing Center loaded in Agentforce Studio</label>
-          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Heroku storefront open in a browser tab</label>
-          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Demo scenarios practiced at least once</label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Agentforce Builder open with agent loaded</label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Preview tab tested with at least one scenario</label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Trust Layer Setup page loaded in separate tab</label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Einstein Audit Setup page loaded</label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Agentforce Studio loaded (Analytics + Tests)</label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Heroku storefront open and chat widget tested</label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Demo prompts memorized or this playbook handy</label>
           <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Good internet connection confirmed</label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="rounded"> Backup plan ready (use Builder Preview if storefront has issues)</label>
         </div>
       </div>
 
-      <div class="mt-6 bg-nike rounded-xl p-5 text-white">
-        <h3 class="font-semibold text-sm mb-3">🎬 Recommended Demo Flow (20 min)</h3>
-        <div class="space-y-2 text-sm text-white/80">
-          <div class="flex items-center gap-3">
-            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded">0:00</span>
-            <span>Open with Agentforce Builder Preview — run Order Tracking scenario</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded">3:00</span>
-            <span>Walk through the reasoning trace (Agent Optimization)</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded">7:00</span>
-            <span>Run Escalation scenario — show graceful handoff</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded">10:00</span>
-            <span>Switch to Agent Analytics — show volume, deflection, topics</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded">13:00</span>
-            <span>Show Einstein Trust Layer — data masking, audit trail</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded">16:00</span>
-            <span>Quick tour of Testing Center — structured test cases</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="bg-nike-accent text-white text-xs font-bold px-2 py-0.5 rounded">18:00</span>
-            <span>Close with Heroku storefront — "same agent, any channel"</span>
-          </div>
+      <div class="bg-gradient-to-r from-nike to-gray-800 rounded-xl p-6 text-white">
+        <h3 class="font-semibold text-sm mb-3">🎯 Closing Differentiators — What to Leave Them With</h3>
+        <div class="text-sm text-white/80 space-y-2">
+          <p>→ <strong>"Grounded, not hallucinated"</strong> — every answer traces back to real Salesforce data</p>
+          <p>→ <strong>"Actions, not just answers"</strong> — the agent processes returns, creates cases, updates records</p>
+          <p>→ <strong>"Trusted by default"</strong> — PII masking, toxicity detection, prompt injection defense, zero data retention</p>
+          <p>→ <strong>"Observable and optimizable"</strong> — full reasoning trace, session analytics, AI-powered improvement suggestions</p>
+          <p>→ <strong>"Testable like software"</strong> — structured test suites with pass/fail, run before every deployment</p>
+          <p>→ <strong>"Deploy anywhere"</strong> — same agent works in Salesforce, on your website, in your app, via API</p>
         </div>
       </div>
     </section>
