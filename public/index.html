@@ -607,10 +607,16 @@
             background: #1a1a1a;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(250,84,0,0.08);
             border: 1px solid rgba(255,255,255,0.1);
             max-width: 420px;
             margin-left: auto;
+            animation: chatWindowGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes chatWindowGlow {
+            0% { box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(250,84,0,0.05); }
+            100% { box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 50px rgba(250,84,0,0.12); }
         }
 
         .chat-demo-header {
@@ -692,6 +698,23 @@
             color: #e0e0e0;
             align-self: flex-start;
             border-bottom-left-radius: 4px;
+            position: relative;
+            margin-left: 28px;
+        }
+
+        .chat-msg.agent::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            bottom: 4px;
+            width: 22px;
+            height: 22px;
+            background: var(--nike-orange);
+            border-radius: 50%;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M21 8.719L7.836 14.303C6.74 14.768 5.818 15 5.075 15c-.836 0-1.445-.295-1.819-.884-.485-.76-.273-1.982.559-3.272.494-.754 1.122-1.446 1.734-2.108-.144.234-1.415 2.349-.025 3.345.275.2.666.298 1.147.298.386 0 .829-.063 1.316-.19L21 8.719z'/%3E%3C/svg%3E");
+            background-size: 12px;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
         .chat-msg.agent strong {
@@ -791,6 +814,59 @@
 
         .chat-demo-send:hover {
             transform: scale(1.1);
+        }
+
+        .chat-demo-send:active {
+            transform: scale(0.95);
+        }
+
+        .chat-powered-by {
+            text-align: center;
+            padding: 8px;
+            font-size: 10px;
+            color: #555;
+            letter-spacing: 0.5px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .chat-powered-by svg {
+            vertical-align: middle;
+            margin-right: 3px;
+        }
+
+        .chat-timestamp {
+            font-size: 10px;
+            color: #555;
+            text-align: center;
+            padding: 4px 0;
+            animation: chatMsgIn 0.3s ease forwards;
+        }
+
+        .chat-msg.agent a {
+            color: var(--nike-orange);
+            text-decoration: underline;
+        }
+
+        .chat-msg.agent a:hover {
+            color: #ff6b1a;
+        }
+
+        /* Connection status animation */
+        .connecting-shimmer {
+            background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 16px;
+            padding: 12px 16px;
+            align-self: flex-start;
+            margin-left: 28px;
+            height: 40px;
+            width: 160px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
         .scenario-tabs {
@@ -1068,6 +1144,10 @@
                             <svg width="16" height="16" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
                         </button>
                     </div>
+                    <div class="chat-powered-by">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#555"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6" stroke="#1a1a1a" stroke-width="2" fill="none"/></svg>
+                        Powered by Salesforce Agentforce
+                    </div>
                 </div>
             </div>
         </div>
@@ -1319,6 +1399,9 @@
                 // Format agent text — handle markdown-like formatting
                 let formatted = text
                     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
+                    .replace(/^\s*[-•]\s+(.+)$/gm, '<div style="padding-left:12px;margin:2px 0;">• $1</div>')
+                    .replace(/^\s*(\d+)\.\s+(.+)$/gm, '<div style="padding-left:12px;margin:2px 0;">$1. $2</div>')
                     .replace(/\n/g, '<br>');
                 msg.innerHTML = formatted;
                 body.appendChild(msg);
