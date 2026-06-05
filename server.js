@@ -184,7 +184,6 @@ app.post('/api/agent/message', async (req, res) => {
 // Key: defer 200 until upstream confirms, so browser gets real 503 on failures
 app.get('/api/agent/sse', (req, res) => {
     const accessToken = req.query.token;
-    const lastEventId = req.query.lastEventId;
     if (!accessToken) {
         return res.status(400).json({ error: 'Missing token' });
     }
@@ -200,10 +199,6 @@ app.get('/api/agent/sse', (req, res) => {
         if (sseReq) sseReq.destroy();
         try { res.end(); } catch {}
     }
-
-    const ssePath = lastEventId
-        ? `/eventrouter/v1/sse?lastEventId=${encodeURIComponent(lastEventId)}`
-        : '/eventrouter/v1/sse';
 
     const options = {
         hostname: SCRT2_DOMAIN,

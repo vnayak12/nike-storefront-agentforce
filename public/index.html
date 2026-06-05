@@ -1474,8 +1474,7 @@
                     this.sseSource = null;
                 }
 
-                let url = `/api/agent/sse?token=${encodeURIComponent(this.accessToken)}`;
-                if (this.lastEventId) url += `&lastEventId=${encodeURIComponent(this.lastEventId)}`;
+                const url = `/api/agent/sse?token=${encodeURIComponent(this.accessToken)}`;
                 this.sseSource = new EventSource(url);
 
                 this.sseSource.onopen = () => {
@@ -1767,14 +1766,17 @@
                     return;
                 }
 
-                // Now start SSE — conversation exists, so event router will accept
+                // Brief delay to let SCRT2 event router register the conversation
+                await new Promise(r => setTimeout(r, 1500));
+
+                // Now start SSE — conversation exists, event router should accept
                 this.startSSE();
 
-                // Wait for SSE to establish (up to 5s)
+                // Wait for SSE to establish (up to 8s with retries)
                 let waited = 0;
-                while (!this.isConnected && waited < 5000) {
-                    await new Promise(r => setTimeout(r, 200));
-                    waited += 200;
+                while (!this.isConnected && waited < 8000) {
+                    await new Promise(r => setTimeout(r, 300));
+                    waited += 300;
                 }
 
                 this.isInitializing = false;

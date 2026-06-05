@@ -1,5 +1,9 @@
 node_modules/
-.env
-.DS_Store
-npm-debug.log
 *.log
+create-and-run-tests.mjs
+create-tests.js
+run-tests.sh
+sf-api.js
+sfdx-project.json
+specs/
+test-report.html
