@@ -277,14 +277,18 @@ app.get('/api/agent/sse', (req, res) => {
                 for (const event of events) {
                     if (!event.trim()) continue;
                     const lines = event.split('\n');
+                    let forwarded = false;
                     for (const line of lines) {
                         if (line.startsWith('event:')) continue;
                         if (line.startsWith('id:')) continue;
                         if (line.trim()) {
-                            try { res.write(line + '\n'); } catch {}
+                            try { res.write(line + '\n'); forwarded = true; } catch {}
                         }
                     }
-                    try { res.write('\n'); } catch {}
+                    if (forwarded) {
+                        try { res.write('\n'); } catch {}
+                        console.log('SSE forwarded event to browser');
+                    }
                 }
             });
             sseRes.on('end', () => {
