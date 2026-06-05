@@ -1361,13 +1361,16 @@
         const AgentChat = {
             accessToken: null,
             conversationId: null,
+            lastEventId: null,
             sseSource: null,
             isConnected: false,
+            isInitializing: false,
             isFirstMessage: true,
             pendingAgentText: '',
             typingTimer: null,
             messageBuffer: '',
             lastAgentMsgEl: null,
+            pendingMessages: [],
 
             // Generate UUID v4
             uuid() {
@@ -1449,7 +1452,8 @@
                     const data = await res.json();
                     if (data.accessToken) {
                         this.accessToken = data.accessToken;
-                        console.log('Got access token');
+                        this.lastEventId = data.lastEventId || null;
+                        console.log('Got access token, lastEventId:', this.lastEventId);
                         return true;
                     }
                     console.error('No access token in response:', data);
@@ -1470,7 +1474,8 @@
                     this.sseSource = null;
                 }
 
-                const url = `/api/agent/sse?token=${encodeURIComponent(this.accessToken)}`;
+                let url = `/api/agent/sse?token=${encodeURIComponent(this.accessToken)}`;
+                if (this.lastEventId) url += `&lastEventId=${encodeURIComponent(this.lastEventId)}`;
                 this.sseSource = new EventSource(url);
 
                 this.sseSource.onopen = () => {
@@ -1657,6 +1662,42 @@
                 }
             },
 
+            // Send message without adding to UI (for queued quick prompts already displayed)
+            async sendMessageDirect(text) {
+                if (!text.trim() || !this.accessToken || !this.conversationId) return;
+                this.setInputEnabled(false);
+                this.showTyping();
+
+                try {
+                    const res = await fetch('/api/agent/message', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            accessToken: this.accessToken,
+                            conversationId: this.conversationId,
+                            text: text,
+                            messageId: this.uuid(),
+                            isNewSession: this.isFirstMessage
+                        })
+                    });
+
+                    if (!res.ok) {
+                        const errText = await res.text();
+                        console.error('Send message error:', res.status, errText);
+                        this.removeTyping();
+                        this.addMessage('Sorry, there was an issue sending your message. Please try again.', 'agent');
+                        this.setInputEnabled(true);
+                    }
+                    this.isFirstMessage = false;
+                    setTimeout(() => { this.setInputEnabled(true); }, 30000);
+                } catch (err) {
+                    console.error('Send error:', err);
+                    this.removeTyping();
+                    this.addMessage('Connection error. Please try again.', 'agent');
+                    this.setInputEnabled(true);
+                }
+            },
+
             // ===== STEP 5: Send message =====
             async sendMessage(text) {
                 if (!text.trim() || !this.accessToken || !this.conversationId) return;
@@ -1704,31 +1745,63 @@
 
             // ===== INITIALIZE =====
             async init() {
+                if (this.isInitializing) return;
+                this.isInitializing = true;
                 this.setInputEnabled(false);
                 this.setStatus('Connecting...', '#ffd700');
 
                 const gotToken = await this.getToken();
                 if (!gotToken) {
+                    this.isInitializing = false;
                     this.setStatus('Connection failed', '#ff4444');
                     this.addMessage('Unable to connect to the Nike Assistant. Please refresh the page to try again.', 'agent');
                     return;
                 }
 
-                // Start SSE before creating conversation
-                this.startSSE();
-
-                // Small delay to let SSE establish
-                await new Promise(r => setTimeout(r, 1000));
-
+                // Create conversation FIRST — SCRT2 requires an active conversation before SSE will connect
                 const created = await this.createConversation();
                 if (!created) {
+                    this.isInitializing = false;
                     this.setStatus('Connection failed', '#ff4444');
                     this.addMessage('Unable to start a conversation. Please refresh the page.', 'agent');
                     return;
                 }
 
-                this.setStatus('Online', '#00d26a');
-                this.setInputEnabled(true);
+                // Now start SSE — conversation exists, so event router will accept
+                this.startSSE();
+
+                // Wait for SSE to establish (up to 5s)
+                let waited = 0;
+                while (!this.isConnected && waited < 5000) {
+                    await new Promise(r => setTimeout(r, 200));
+                    waited += 200;
+                }
+
+                this.isInitializing = false;
+
+                if (this.isConnected) {
+                    this.setStatus('Online', '#00d26a');
+                    this.setInputEnabled(true);
+                    // Send any queued messages from quick prompt clicks
+                    // These were already displayed in the UI by sendQuickPrompt, so send without re-displaying
+                    while (this.pendingMessages.length > 0) {
+                        const msg = this.pendingMessages.shift();
+                        await this.sendMessageDirect(msg);
+                    }
+                } else {
+                    // SSE may still be connecting — enable input anyway
+                    this.setInputEnabled(true);
+                    // If there are pending messages, keep trying
+                    if (this.pendingMessages.length > 0) {
+                        setTimeout(() => {
+                            if (this.isConnected && this.pendingMessages.length > 0) {
+                                const msgs = [...this.pendingMessages];
+                                this.pendingMessages = [];
+                                msgs.forEach(m => this.sendMessageDirect(m));
+                            }
+                        }, 3000);
+                    }
+                }
             },
 
             // ===== RESET =====
@@ -1750,9 +1823,12 @@
 
                 this.accessToken = null;
                 this.conversationId = null;
+                this.lastEventId = null;
                 this.isConnected = false;
+                this.isInitializing = false;
                 this.isFirstMessage = true;
                 this.lastAgentMsgEl = null;
+                this.pendingMessages = [];
 
                 const body = document.getElementById('chatDemoBody');
                 body.innerHTML = '';
@@ -1780,17 +1856,26 @@
         });
 
         function sendQuickPrompt(text) {
-            const input = document.getElementById('liveAgentInput');
             // Scroll to chat
             document.getElementById('live-agent').scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => {
-                if (AgentChat.isConnected && AgentChat.conversationId) {
-                    AgentChat.sendMessage(text);
-                } else {
-                    input.value = text;
-                    input.focus();
+
+            if (AgentChat.isConnected && AgentChat.conversationId) {
+                // Already connected — send immediately
+                AgentChat.sendMessage(text);
+            } else {
+                // Not connected yet — queue the message and auto-initialize
+                AgentChat.pendingMessages = [text]; // Replace any existing queued message
+                AgentChat.addMessage(text, 'user');
+                AgentChat.showTyping();
+                AgentChat.setInputEnabled(false);
+
+                if (!chatInitialized && !AgentChat.isInitializing) {
+                    chatInitialized = true;
+                    AgentChat.init();
+                } else if (AgentChat.isInitializing) {
+                    // Already initializing — message is queued, will be sent when ready
                 }
-            }, 500);
+            }
         }
 
         function resetChat() {
