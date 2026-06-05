@@ -89,7 +89,13 @@ app.use(helmet({
     crossOriginOpenerPolicy: false
 }));
 
-app.use(compression());
+app.use(compression({
+    filter: (req, res) => {
+        // Don't compress SSE streams — compression buffers data and breaks streaming
+        if (req.path === '/api/agent/sse') return false;
+        return compression.filter(req, res);
+    }
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
