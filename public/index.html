@@ -1484,7 +1484,8 @@
                         const { done, value } = await reader.read();
                         if (done) break;
 
-                        buffer += decoder.decode(value, { stream: true });
+                        const chunk = decoder.decode(value, { stream: true });
+                        buffer += chunk;
                         const lines = buffer.split('\n');
                         buffer = lines.pop() || '';
 
@@ -1492,9 +1493,10 @@
                             const trimmed = line.trim();
                             if (trimmed.startsWith('data:')) {
                                 const data = trimmed.substring(5).trim();
-                                if (data && data !== '0') {
-                                    this.handleSSEData(data);
-                                }
+                                // Skip heartbeat integers and empty
+                                if (!data || /^\d+$/.test(data)) continue;
+                                console.log('SSE data received:', data.substring(0, 120));
+                                this.handleSSEData(data);
                             }
                         }
                     }
@@ -1563,6 +1565,7 @@
                     if (!entry) return;
 
                     const entryType = entry.entryType || '';
+                    console.log('SSE entryType:', entryType, 'sender:', entry.sender?.role);
 
                     switch (entryType) {
                         case 'Message':
@@ -1593,6 +1596,7 @@
 
             handleAgentMessage(data) {
                 this.removeTyping();
+                console.log('handleAgentMessage called, sender:', data.conversationEntry?.sender?.role);
 
                 // Extract text from various SCRT2 message formats
                 let text = '';
