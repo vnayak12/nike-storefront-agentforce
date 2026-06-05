@@ -175,7 +175,7 @@ app.post('/api/agent/conversation', async (req, res) => {
 // 3. Send message
 app.post('/api/agent/message', async (req, res) => {
     try {
-        const { accessToken, conversationId, text, messageId, isNewSession } = req.body;
+        const { accessToken, conversationId, text, messageId, isNewSession, language } = req.body;
         const result = await scrt2Request('POST',
             `/iamessage/api/v2/conversation/${conversationId}/message`,
             {
@@ -194,7 +194,7 @@ app.post('/api/agent/message', async (req, res) => {
                 esDeveloperName: ES_DEVELOPER_NAME,
                 isNewMessagingSession: isNewSession || false,
                 routingAttributes: {},
-                language: 'en'
+                language: language || 'en'
             }
         );
         res.status(result.statusCode).send(result.body);
@@ -402,7 +402,7 @@ app.get('/health', (req, res) => {
 
 // Version check
 app.get('/api/version', (req, res) => {
-    res.json({ version: 'v7-production', ts: Date.now() });
+    res.json({ version: 'v8-multilingual', ts: Date.now() });
 });
 
 // Debug log endpoint

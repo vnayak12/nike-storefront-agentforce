@@ -589,13 +589,33 @@
             font-size: 13px;
             font-weight: 500;
             transition: all 0.3s;
-            cursor: default;
+            cursor: pointer;
+            font-family: inherit;
         }
 
         .capability-chip:hover {
-            background: rgba(250,84,0,0.15);
+            background: var(--nike-orange);
             border-color: var(--nike-orange);
-            color: var(--nike-orange);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(250,84,0,0.3);
+        }
+
+        .capability-chip:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(250,84,0,0.2);
+        }
+
+        .lang-chip:hover {
+            background: var(--nike-orange) !important;
+            border-color: var(--nike-orange) !important;
+            color: white !important;
+        }
+
+        .lang-active {
+            background: var(--nike-orange) !important;
+            border-color: var(--nike-orange) !important;
+            color: white !important;
         }
 
         .capability-chip .chip-icon {
@@ -1102,14 +1122,28 @@
                 <p>This is a real Agentforce-powered assistant. Ask about products, track orders, run a style quiz, or get help with returns — all live, right here.</p>
 
                 <div class="agent-capabilities">
-                    <span class="capability-chip"><span class="chip-icon">🎯</span>Style Quiz</span>
-                    <span class="capability-chip"><span class="chip-icon">🛍️</span>Product Recs</span>
-                    <span class="capability-chip"><span class="chip-icon">📦</span>Order Tracking</span>
-                    <span class="capability-chip"><span class="chip-icon">🔄</span>Returns</span>
-                    <span class="capability-chip"><span class="chip-icon">💎</span>Member Perks</span>
-                    <span class="capability-chip"><span class="chip-icon">🌍</span>7 Languages</span>
-                    <span class="capability-chip"><span class="chip-icon">⬆️</span>Cross-Sell</span>
-                    <span class="capability-chip"><span class="chip-icon">📏</span>Size Guide</span>
+                    <button class="capability-chip" onclick="sendQuickPrompt('Can you run a style quiz for me? I want to find my perfect Nike look.')"><span class="chip-icon">🎯</span>Style Quiz</button>
+                    <button class="capability-chip" onclick="sendQuickPrompt('What Nike shoes do you recommend for me? I like running and casual wear.')"><span class="chip-icon">🛍️</span>Product Recs</button>
+                    <button class="capability-chip" onclick="sendQuickPrompt('Where is my order 00000167? My email is jane.doe@nike-test.com')"><span class="chip-icon">📦</span>Order Tracking</button>
+                    <button class="capability-chip" onclick="sendQuickPrompt('I want to return my order 00000168. Can you help me with that?')"><span class="chip-icon">🔄</span>Returns</button>
+                    <button class="capability-chip" onclick="sendQuickPrompt('What are the benefits of Nike Membership? Tell me about member perks and rewards.')"><span class="chip-icon">💎</span>Member Perks</button>
+                    <button class="capability-chip" onclick="toggleLanguageSelector()"><span class="chip-icon">🌍</span>7 Languages</button>
+                    <button class="capability-chip" onclick="sendQuickPrompt('I just bought the Nike Pegasus 41. What accessories or gear should I pair with it?')"><span class="chip-icon">⬆️</span>Cross-Sell</button>
+                    <button class="capability-chip" onclick="sendQuickPrompt('I wear size 10 in Adidas. What would my Nike size be? Can you help me with sizing?')"><span class="chip-icon">📏</span>Size Guide</button>
+                </div>
+
+                <!-- Language Selector (hidden by default) -->
+                <div id="languageSelector" style="display:none; margin-top:12px; padding:12px 16px; background:rgba(255,255,255,0.06); border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                    <p style="color:#ccc; font-size:12px; margin-bottom:8px; font-weight:600;">🌍 Select a language to chat in:</p>
+                    <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                        <button class="capability-chip lang-chip" onclick="setLanguageAndChat('en', 'Hello! I need help with Nike products.')" style="cursor:pointer;">🇺🇸 English</button>
+                        <button class="capability-chip lang-chip" onclick="setLanguageAndChat('es', '¡Hola! Necesito ayuda con productos Nike.')" style="cursor:pointer;">🇪🇸 Español</button>
+                        <button class="capability-chip lang-chip" onclick="setLanguageAndChat('fr', 'Bonjour! J\'ai besoin d\'aide avec les produits Nike.')" style="cursor:pointer;">🇫🇷 Français</button>
+                        <button class="capability-chip lang-chip" onclick="setLanguageAndChat('de', 'Hallo! Ich brauche Hilfe mit Nike-Produkten.')" style="cursor:pointer;">🇩🇪 Deutsch</button>
+                        <button class="capability-chip lang-chip" onclick="setLanguageAndChat('ja', 'こんにちは！Nikeの商品について教えてください。')" style="cursor:pointer;">🇯🇵 日本語</button>
+                        <button class="capability-chip lang-chip" onclick="setLanguageAndChat('zh', '你好！我需要Nike产品的帮助。')" style="cursor:pointer;">🇨🇳 中文</button>
+                        <button class="capability-chip lang-chip" onclick="setLanguageAndChat('pt', 'Olá! Preciso de ajuda com produtos Nike.')" style="cursor:pointer;">🇧🇷 Português</button>
+                    </div>
                 </div>
 
                 <div class="quick-prompts" style="margin-bottom: 24px;">
@@ -1680,7 +1714,8 @@
                             conversationId: this.conversationId,
                             text: text,
                             messageId: this.uuid(),
-                            isNewSession: this.isFirstMessage
+                            isNewSession: this.isFirstMessage,
+                            language: currentLanguage
                         })
                     });
 
@@ -1719,7 +1754,8 @@
                             conversationId: this.conversationId,
                             text: text,
                             messageId: this.uuid(),
-                            isNewSession: this.isFirstMessage
+                            isNewSession: this.isFirstMessage,
+                            language: currentLanguage
                         })
                     });
 
@@ -1827,6 +1863,46 @@
                 await this.init();
             }
         };
+
+        // ===== LANGUAGE SUPPORT =====
+        let currentLanguage = 'en';
+        const languageNames = {
+            'en': 'English', 'es': 'Español', 'fr': 'Français',
+            'de': 'Deutsch', 'ja': '日本語', 'zh': '中文', 'pt': 'Português'
+        };
+
+        function toggleLanguageSelector() {
+            const sel = document.getElementById('languageSelector');
+            if (sel.style.display === 'none') {
+                sel.style.display = 'block';
+                sel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                sel.style.display = 'none';
+            }
+        }
+
+        function setLanguageAndChat(lang, greeting) {
+            currentLanguage = lang;
+            // Highlight active language
+            document.querySelectorAll('.lang-chip').forEach(c => c.classList.remove('lang-active'));
+            event.target.closest('.lang-chip').classList.add('lang-active');
+            // Update chat placeholder based on language
+            const placeholders = {
+                'en': 'Type a message...',
+                'es': 'Escribe un mensaje...',
+                'fr': 'Tapez un message...',
+                'de': 'Nachricht eingeben...',
+                'ja': 'メッセージを入力...',
+                'zh': '输入消息...',
+                'pt': 'Digite uma mensagem...'
+            };
+            const input = document.getElementById('liveAgentInput');
+            if (input) input.placeholder = placeholders[lang] || 'Type a message...';
+            // Hide the selector
+            document.getElementById('languageSelector').style.display = 'none';
+            // Send the greeting in chosen language
+            sendQuickPrompt(greeting);
+        }
 
         // ===== UI BINDINGS =====
         function sendLiveMessage() {
