@@ -325,6 +325,11 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Version check
+app.get('/api/version', (req, res) => {
+    res.json({ version: 'v5-immediate-sse', ts: Date.now() });
+});
+
 app.listen(PORT, () => {
     console.log(`Nike Storefront running on port ${PORT}`);
 });
