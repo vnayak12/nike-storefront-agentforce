@@ -132,7 +132,6 @@ app.post('/api/agent/conversation', async (req, res) => {
             {
                 conversationId: conversationId,
                 esDeveloperName: ES_DEVELOPER_NAME,
-                routingType: 'agent',
                 routingAttributes: {
                     _firstName: 'Nike',
                     _lastName: 'Shopper'
