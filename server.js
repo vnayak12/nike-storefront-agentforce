@@ -202,7 +202,7 @@ app.get('/api/agent/sse', (req, res) => {
 
     const options = {
         hostname: SCRT2_DOMAIN,
-        path: ssePath,
+        path: '/eventrouter/v1/sse',
         method: 'GET',
         timeout: 30000,  // 30s connect timeout, then we keep alive
         headers: {
