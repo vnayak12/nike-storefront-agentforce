@@ -7,6 +7,16 @@ const https = require('https');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// In-memory debug log ring buffer
+const debugLog = [];
+const MAX_DEBUG = 100;
+function dlog(msg) {
+    const entry = `[${new Date().toISOString()}] ${msg}`;
+    debugLog.push(entry);
+    if (debugLog.length > MAX_DEBUG) debugLog.shift();
+    console.log(msg);
+}
+
 // Prevent uncaught exceptions from crashing the server
 process.on('uncaughtException', (err) => {
     console.error('Uncaught exception:', err.message);
@@ -197,7 +207,7 @@ app.get('/api/agent/sse', (req, res) => {
     if (!accessToken) {
         return res.status(400).json({ error: 'Missing token' });
     }
-    console.log('SSE request received, token length:', accessToken.length);
+    dlog('SSE request received, token length: ' + accessToken.length);
 
     // Send SSE headers IMMEDIATELY — don't wait for upstream
     // This prevents Heroku router from timing out
@@ -245,16 +255,21 @@ app.get('/api/agent/sse', (req, res) => {
     function connectUpstream() {
         if (closed) return;
         buffer = '';
+        dlog('connectUpstream called, retryCount=' + retryCount);
 
         const sseReq = https.request(options, (sseRes) => {
+            dlog('SSE upstream response status: ' + sseRes.statusCode);
             if (sseRes.statusCode !== 200) {
-                console.error('SSE upstream status:', sseRes.statusCode);
+                let body = '';
+                sseRes.on('data', c => body += c);
+                sseRes.on('end', () => {
+                    dlog('SSE upstream error body: ' + body.substring(0, 200));
+                });
                 try { res.write(`data:{"error":"upstream_${sseRes.statusCode}"}\n\n`); } catch {}
-                // Retry upstream connection
                 retryCount++;
                 if (retryCount <= maxRetries && !closed) {
                     const delay = Math.min(2000 * retryCount, 10000);
-                    console.log(`SSE upstream retry ${retryCount}/${maxRetries} in ${delay}ms`);
+                    dlog(`SSE upstream retry ${retryCount}/${maxRetries} in ${delay}ms`);
                     setTimeout(connectUpstream, delay);
                 } else if (!closed) {
                     try { res.write(`data:{"error":"max_retries"}\n\n`); } catch {}
@@ -263,13 +278,15 @@ app.get('/api/agent/sse', (req, res) => {
                 return;
             }
 
-            console.log('SSE upstream connected');
+            dlog('SSE upstream connected OK');
             retryCount = 0;
             sseReq.setTimeout(0);
 
             sseRes.on('data', (chunk) => {
                 if (closed) return;
-                buffer += chunk.toString();
+                const chunkStr = chunk.toString();
+                buffer += chunkStr;
+                dlog('SSE upstream chunk: ' + chunkStr.length + ' bytes');
 
                 const events = buffer.split('\n\n');
                 buffer = events.pop() || '';
@@ -282,19 +299,20 @@ app.get('/api/agent/sse', (req, res) => {
                         if (line.startsWith('event:')) continue;
                         if (line.startsWith('id:')) continue;
                         if (line.trim()) {
-                            try { res.write(line + '\n'); forwarded = true; } catch {}
+                            try { res.write(line + '\n'); forwarded = true; } catch (e) {
+                                dlog('res.write failed: ' + e.message);
+                            }
                         }
                     }
                     if (forwarded) {
                         try { res.write('\n'); } catch {}
-                        console.log('SSE forwarded event to browser');
+                        dlog('SSE forwarded event to browser');
                     }
                 }
             });
             sseRes.on('end', () => {
-                console.log('SSE upstream ended');
+                dlog('SSE upstream ended');
                 if (!closed) {
-                    // Reconnect upstream
                     retryCount++;
                     if (retryCount <= maxRetries) {
                         setTimeout(connectUpstream, 2000);
@@ -304,7 +322,7 @@ app.get('/api/agent/sse', (req, res) => {
                 }
             });
             sseRes.on('error', (err) => {
-                console.error('SSE upstream error:', err.message);
+                dlog('SSE upstream error: ' + err.message);
                 if (!closed) {
                     retryCount++;
                     if (retryCount <= maxRetries) {
@@ -317,7 +335,7 @@ app.get('/api/agent/sse', (req, res) => {
         });
 
         sseReq.on('error', (err) => {
-            console.error('SSE request error:', err.message);
+            dlog('SSE request error: ' + err.message);
             if (!closed) {
                 retryCount++;
                 if (retryCount <= maxRetries) {
@@ -330,7 +348,7 @@ app.get('/api/agent/sse', (req, res) => {
         });
 
         sseReq.on('timeout', () => {
-            console.error('SSE connect timeout');
+            dlog('SSE connect timeout');
             sseReq.destroy();
             if (!closed) {
                 retryCount++;
@@ -344,12 +362,12 @@ app.get('/api/agent/sse', (req, res) => {
         });
 
         sseReq.end();
-        req.on('close', () => { closed = true; sseReq.destroy(); cleanup(null); });
+        req.on('close', () => { dlog('Browser SSE closed'); closed = true; sseReq.destroy(); cleanup(null); });
     }
 
     connectUpstream();
     } catch (err) {
-        console.error('SSE handler crash:', err.message, err.stack);
+        dlog('SSE handler crash: ' + err.message);
         try { res.status(500).json({ error: 'internal_error' }); } catch {}
     }
 });
@@ -390,7 +408,12 @@ app.get('/health', (req, res) => {
 
 // Version check
 app.get('/api/version', (req, res) => {
-    res.json({ version: 'v5-immediate-sse', ts: Date.now() });
+    res.json({ version: 'v6-debug-sse', ts: Date.now() });
+});
+
+// Debug log endpoint
+app.get('/api/debug', (req, res) => {
+    res.json({ logs: debugLog, count: debugLog.length });
 });
 
 app.listen(PORT, () => {
