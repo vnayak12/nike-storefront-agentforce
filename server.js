@@ -183,7 +183,8 @@ app.post('/api/agent/message', async (req, res) => {
 // 4. SSE proxy — streams events from SCRT2 to the browser
 // Key: defer 200 until upstream confirms, so browser gets real 503 on failures
 app.get('/api/agent/sse', (req, res) => {
-    const accessToken = req.query.token;
+    // Accept token from header (preferred) or query param (fallback)
+    const accessToken = req.headers['x-agent-token'] || req.query.token;
     if (!accessToken) {
         return res.status(400).json({ error: 'Missing token' });
     }
