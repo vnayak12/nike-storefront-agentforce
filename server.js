@@ -191,20 +191,25 @@ app.post('/api/agent/message', async (req, res) => {
 // 4. SSE proxy — streams events from SCRT2 to the browser
 // Sends 200 immediately so Heroku router doesn't time out, then proxies SCRT2 events
 app.get('/api/agent/sse', (req, res) => {
+    try {
     // Accept token from header (preferred) or query param (fallback)
     const accessToken = req.headers['x-agent-token'] || req.query.token;
     if (!accessToken) {
         return res.status(400).json({ error: 'Missing token' });
     }
+    console.log('SSE request received, token length:', accessToken.length);
 
     // Send SSE headers IMMEDIATELY — don't wait for upstream
     // This prevents Heroku router from timing out
-    res.writeHead(200, {
+    // Use res.set + res.status + res.flushHeaders to work with helmet middleware
+    res.set({
         'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
+        'Cache-Control': 'no-cache, no-store',
         'Connection': 'keep-alive',
         'X-Accel-Buffering': 'no'
     });
+    res.status(200);
+    res.flushHeaders();
     res.write(':ok\n\n');
 
     let closed = false;
@@ -289,6 +294,10 @@ app.get('/api/agent/sse', (req, res) => {
     sseReq.end();
 
     req.on('close', () => cleanup(sseReq));
+    } catch (err) {
+        console.error('SSE handler crash:', err.message, err.stack);
+        try { res.status(500).json({ error: 'internal_error' }); } catch {}
+    }
 });
 
 // 5. Close conversation
