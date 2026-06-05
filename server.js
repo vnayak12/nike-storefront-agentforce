@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 // SCRT2 Configuration
 const SCRT2_DOMAIN = 'trailsignup-d7fd90d7f30b8a.my.salesforce-scrt.com';
 const ORG_ID = '00Dbm00000jtzs9';
-const ES_DEVELOPER_NAME = 'Nike_CS_Web_Chat';
+const ES_DEVELOPER_NAME = 'Nike_Headless_API';
 
 // Security headers with CSP allowing Salesforce MIAW widget
 app.use(helmet({
@@ -125,10 +125,14 @@ app.post('/api/agent/conversation', async (req, res) => {
         const { accessToken, conversationId } = req.body;
         const result = await scrt2Request('POST',
             '/iamessage/api/v2/conversation',
-            { 'Authorization': `Bearer ${accessToken}` },
+            {
+                'Authorization': `Bearer ${accessToken}`,
+                'X-Org-Id': ORG_ID
+            },
             {
                 conversationId: conversationId,
                 esDeveloperName: ES_DEVELOPER_NAME,
+                routingType: 'agent',
                 routingAttributes: {
                     _firstName: 'Nike',
                     _lastName: 'Shopper'
@@ -148,7 +152,10 @@ app.post('/api/agent/message', async (req, res) => {
         const { accessToken, conversationId, text, messageId, isNewSession } = req.body;
         const result = await scrt2Request('POST',
             `/iamessage/api/v2/conversation/${conversationId}/message`,
-            { 'Authorization': `Bearer ${accessToken}` },
+            {
+                'Authorization': `Bearer ${accessToken}`,
+                'X-Org-Id': ORG_ID
+            },
             {
                 message: {
                     id: messageId,
