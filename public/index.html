@@ -1367,6 +1367,7 @@
             messageBuffer: '',
             lastAgentMsgEl: null,
             pendingMessages: [],
+            quickPromptResend: null,  // Stores quick prompt to re-send after agent greeting
 
             // Generate UUID v4
             uuid() {
@@ -1668,6 +1669,16 @@
                 }
 
                 if (text && text.trim()) {
+                    // If we have a quick prompt waiting to be re-sent after greeting,
+                    // skip showing the generic greeting and re-send the actual question
+                    if (this.quickPromptResend) {
+                        const resendText = this.quickPromptResend;
+                        this.quickPromptResend = null;
+                        console.log('Resending quick prompt after greeting:', resendText);
+                        // Don't show the greeting — just re-send the user's actual question
+                        this.sendMessageDirect(resendText);
+                        return;
+                    }
                     this.addMessage(text.trim(), 'agent');
                     this.setInputEnabled(true);
                 }
@@ -1855,6 +1866,7 @@
                 this.isFirstMessage = true;
                 this.lastAgentMsgEl = null;
                 this.pendingMessages = [];
+                this.quickPromptResend = null;
 
                 const body = document.getElementById('chatDemoBody');
                 body.innerHTML = '';
@@ -1938,6 +1950,8 @@
                 AgentChat.sendMessage(text);
             } else {
                 // Not connected — display message in chat, queue it, and auto-initialize
+                // Set quickPromptResend so the greeting is suppressed and the question is re-sent
+                AgentChat.quickPromptResend = text;
                 AgentChat.pendingMessages = [text];
                 AgentChat.addMessage(text, 'user');
                 AgentChat.showTyping();
