@@ -1679,6 +1679,14 @@
                         this.sendMessageDirect(resendText);
                         return;
                     }
+                    // Suppress the agent's welcome message — we already show a client-side greeting
+                    if (this.isFirstMessage) {
+                        const lower = text.trim().toLowerCase();
+                        if (lower.includes("i'm your virtual shopping assistant") || lower.includes("i'm nike's virtual assistant") || lower.includes("how can i help you today")) {
+                            console.log('Suppressed duplicate agent welcome message');
+                            return;
+                        }
+                    }
                     this.addMessage(text.trim(), 'agent');
                     this.setInputEnabled(true);
                 }
